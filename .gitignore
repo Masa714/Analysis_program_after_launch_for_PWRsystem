@@ -1,0 +1,9 @@
+data/input_csv/*
+data/output_csv/*
+**/__pycache__/**
+
+
+# ただしプレースホルダーは除外（= 追跡する）
+!data/input_csv/*.txt
+!data/output_csv/*.txt
+

@@ -1,13 +1,28 @@
 """
 create date: 2026/04/23
 author: ikuta
-content:電源系が軌道上で行う様々な解析において、必要なプログラムをまとめたものになります
+content: main (このファイルを実行する)
 """
+#------------------------------------------------------------------------------------
+#import
+from pathlib import Path
+import src.settings_init.HK_valiables as able
+import src.sat_1U.main_1U as main_1U
+import src.sat_2U.main_2U as main_2U
+#------------------------------------------------------------------------------------
+# main
 
+# 生データの入っているcsvファイルのフォルダパスを参照
+data_dir = Path(__file__).resolve().parent.parent.parent/"data"/"Input_csv"
 
-
-
-
-
-
-
+# inputフォルダに格納されているcsvファイルを参照
+for file_path in data_dir.glob("*.csv"):
+        
+   # ファイルに1Uの文字がある時
+   if "1U" in file_path.name:
+      main_1U.analysis_1U(file_path) # 1Uのプログラムを実行
+   # 2Uの文字がある時
+   elif "2U" in file_path.name:
+      main_2U.analysis_2U(file_path) # 2Uのプログラムを実行
+   else:
+      continue
