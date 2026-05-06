@@ -8,7 +8,8 @@ content: main_2U
 # import  
 import src.settings_init.HK_valiables as HK_able
 import src.common.Data_processing.extract_process_from_Input_csv as input
-
+import src.common.Data_processing.output_process as output
+import src.common.utils.organizing_datalist as org
 #------------------------------------------------------
 # main
 
@@ -29,6 +30,17 @@ def analysis_2U(file_path):
 
     # PWR系
     
+
+
+    # 3. csvファイルに出力
+    
+    # PWR系
+    # SAP関係のcsvファイル出力
+    output.csv_output(HK_able.Gene_name_2U, HK_able.columns_gene, extracted_list)
+    # バッテリー関係のcsvファイル出力
+    output.csv_output(HK_able.BAT_name_2U, HK_able.columns_BAT, extracted_list)
+    # 電力収支関係のcsvファイル出力
+    output.csv_output(HK_able.budget_name_2U, HK_able.columns_budget, extracted_list)
     #-----------------------------------------------------------------------------------------
 
 

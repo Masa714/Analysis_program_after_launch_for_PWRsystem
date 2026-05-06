@@ -8,106 +8,94 @@ this file for csv output process
 # import
 import csv
 from pathlib import Path
-import extract_process_from_Input_csv as input
-import src.settings.valiables as able
-import Power_Generation.Power_Generation_calc as PG
+from datetime import datetime
+import src.settings_init.HK_valiables as HK_able
+import src.common.utils.organizing_datalist as org
 #-------------------------------------------------------------
+#function
+
+# 格納されたデータのうち、最初の行のUTC時刻をファイル名に記録するための関数
+
+def create_filename_with_utc(original_file_name, merged_list):
+
+    # UTCの1行目（ヘッダー除いた最初）
+    first_utc = next((t for t in merged_list.get("UTC Time", []) if t is not None), None)
+
+    # UTCが存在しない場合（全てNoneなど）
+    if first_utc is None:
+        print("[WARNING] UTC Time is all None")
+        return f"invalid_{original_file_name}"
+
+    # datetimeに変換
+    try:
+        dt = datetime.strptime(first_utc, "%Y/%m/%d %H:%M:%S")
+    except Exception as e:
+        print(f"[ERROR] UTC format invalid: {first_utc}")
+        return f"invalid_{original_file_name}"
+
+    # YYMMDD_HHMMSS に変換
+    time_str = dt.strftime("%y%m%d_%H%M%S")
+
+    # 新しい名前
+    new_name = f"{time_str}_{original_file_name}.csv"
+
+    return new_name
+#-------------------------------------------------------------------
 # main
 
-# 出力フォルダパスの指定
-output_dir = Path(__file__).resolve().parent.parent.parent / "data"/"Output_csv"
+# csvにデータを格納する関数
+def csv_output(original_file_name, data_header, merged_list): # 引数：つけたい名前, 格納するデータのヘッダーリスト, データが格納されているリスト
+    # 出力フォルダパスの指定
+    output_dir = Path(__file__).resolve().parents[3] / "data"/"Output_csv"
+    # フォルダが存在しないときにエラーを出す (デバッグ用)
+    if not output_dir.exists():
+        raise FileNotFoundError(f"Output folder not found: {output_dir}")
 
-#------------------------------------------------------------
-# 1. 発電量関係
+    # ファイル名の指定
+    file_name = create_filename_with_utc(original_file_name, merged_list)
+    output_file = output_dir / file_name
 
-# 出力ファイルの名前設定
-file_name_1U = able.Gene_name_1U
-file_name_2U = able.Gene_name_2U
-output_file_1U = output_dir/f"{file_name_1U}.csv"
-output_file_2U = output_dir/f"{file_name_2U}.csv"
+    # 行数（1列目基準)
+    num_rows = len(next(iter(merged_list.values())))
+    # valiablesで設定したデータヘッダーのうち、リストに存在するデータのみ使用する
+    new_data_header = [
+        col for col in data_header
+        if org.normalize(col) in [org.normalize(k) for k in merged_list.keys()]
+    ]
 
-# 格納するデータのヘッダー指定
-columns = able.columns_gene
+    # 出力用ヘッダー
+    output_header = [
+        HK_able.header_map.get(col, col)
+        for col in new_data_header
+        ]
 
-# 行数（1列目基準） ここから先のextractはinputからではなく、
-num_rows_1U = len(next(iter(input.extract_1U())))
-num_rows_2U = len(next(iter(input.extract_2U())))
+    #data_header = list(merged_list.keys()) #デバッグ用
 
-# 行データ作成(1U)
-rows_1U = []
-for i in range(num_rows_1U):
-    row = {col: input.extract_1U[col][i] for col in columns}
-    rows_1U.append(row)
+    # 行データ作成
+    rows = []
+    for i in range(num_rows):
+        row = {}
+        for col in new_data_header:
 
-# CSV出力
-with open(output_file_1U, "w", newline="", encoding="utf-8") as f:
-    writer = csv.DictWriter(f, fieldnames=columns)
+            # 対応するkeyを探す
+            match_key = next(
+                (k for k in merged_list.keys() if org.normalize(k) == org.normalize(col)),
+                None
+            )
 
-    writer.writeheader()  # ヘッダー書き込み
-    writer.writerows(rows_1U)
+            new_col = HK_able.header_map.get(col, col)
 
-# 行データ作成(2U)
-rows_2U = []
-for i in range(num_rows_2U):
-    row = {col: input.extract_2U[col][i] for col in columns}
-    rows_2U.append(row)
+            if match_key:
+                row[new_col] = merged_list[match_key][i]
+            else:
+                row[new_col] = ""
 
-# CSV出力
-with open(output_file_2U, "w", newline="", encoding="utf-8") as f:
-    writer = csv.DictWriter(f, fieldnames=columns)
-
-    writer.writeheader()  # ヘッダー書き込み
-    writer.writerows(rows_2U)
-
-#----------------------------------------------------------------------
-# 2. 2次電池関係
-# 出力ファイルの名前設定
-file_name = "Battery_condition"
-output_file = output_dir/f"{file_name}.csv"
-
-columns = list(input.extract.keys())
-
-# 行数（1列目基準）
-num_rows = len(next(iter(input.extract.values())))
-
-# 行データ作成
-rows = []
-for i in range(num_rows):
-    row = {col: input.extract[col][i] for col in columns}
-    rows.append(row)
-
-# CSV出力
-with open(output_file, "w", newline="", encoding="utf-8") as f:
-    writer = csv.DictWriter(f, fieldnames=columns)
-
-    writer.writeheader()  # ヘッダー書き込み
-    writer.writerows(rows)
+        rows.append(row)
 
 
-#----------------------------------------------------------------------
-# 3. 電力収支関係
-# 出力ファイルの名前設定
-file_name = "Power_budget"
-output_file = output_dir/f"{file_name}.csv"
+    # CSV出力
+    with open(output_file, "w", newline="", encoding="utf-8-sig") as f:
+        writer = csv.DictWriter(f, fieldnames=output_header, delimiter=",")
 
-# 抽出するデータのヘッダー
-columns = []
-
-# 行数（1列目基準）
-num_rows = len(next(iter(input.extract.values())))
-
-# 行データ作成
-rows = []
-for i in range(num_rows):
-    row = {col: input.extract[col][i] for col in columns}
-    rows.append(row)
-
-# CSV出力
-with open(output_file, "w", newline="", encoding="utf-8") as f:
-    writer = csv.DictWriter(f, fieldnames=columns)
-
-    writer.writeheader()  # ヘッダー書き込み
-    writer.writerows(rows)
-
-
-
+        writer.writeheader()  # ヘッダー書き込み
+        writer.writerows(rows)

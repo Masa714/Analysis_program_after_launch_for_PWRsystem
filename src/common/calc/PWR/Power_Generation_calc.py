@@ -7,8 +7,8 @@ this file for SAP Power Generation
 #import
 
 import numpy as np
-from src.settings.valiables import able
-import src.Data_processing.extract_process_from_Input_csv as input
+from src.settings_init.HK_valiables import HK_able
+import src.common.Data_processing.extract_process_from_Input_csv as input
 #---------------------------------------------------------
 # function
 
@@ -23,7 +23,7 @@ def SAP_generation_func(curs_px, curs_py, curs_pz, curs_mx, curs_my, vols_sap1, 
     gene_px = curs_my * vols_sap2 #my面
     
     # SAPのP,M面の合計
-
+    
 
 # 2. 軌道1周での平均発電量を計算する関数
 

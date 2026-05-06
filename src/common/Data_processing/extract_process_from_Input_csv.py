@@ -9,65 +9,136 @@ this file for extract process from input_csv
 
 import csv
 from datetime import datetime, timedelta
+import src.common.utils.organizing_datalist as org
 #---------------------------------------------------------------------------------
 # 以下はOBC TimeをUTCに変換するための関数群
 
-# OBC Timeをtimedelta型に変換する関数
-def parse_obc(obc_str):
+# 時刻表記の文字列をdatatime型にパースする関数
+def parse_base_time(time_str):
+    for fmt in ("%Y/%m/%d %H:%M:%S.%f", "%Y/%m/%d %H:%M:%S"):
+        try:
+            return datetime.strptime(time_str, fmt)
+        except:
+            continue
+    return None
+
+# ---------------------------
+# CSVのOBC時刻の文字列 → float型の累積秒に変換
+# ---------------------------
+
+
+def obc_to_seconds(obc_str):
+
+    if not obc_str:
+        return None
+
+    obc_str = obc_str.strip()
+
     try:
-        # 時間, 分, 秒に分割
         h, m, s = obc_str.split(":")
-        # timedelta型に変換
-        return timedelta(
-            hours = int(h),
-            minutes = int(m),
-            seconds = float(s)
-        )
-    except:
-        return timedelta (0)
-    
+        return float(h) * 3600 + float(m) * 60 + float(s)
+    except Exception as e:
+        print("[OBC ERROR]", obc_str, e)
+        return None
+
 # OBC → UTC変換関数
 def convert_obc_to_utc(obc_str, obc_time_sample, utc_time_sample):
-    
-    # OBC TimeとUTC(PC Time)の基準設定
-    base_obc = obc_time_sample
-    base_utc = utc_time_sample
-    
-    # 時刻の形式設定
-    utc_fmt = "%Y/%m/%d %H:%M:%S.%f"
-    
-    # 基準変換 (timedelta型への変換)
-    base_obc_td = parse_obc(base_obc)
-    base_utc_dt = datetime.strptime(base_utc, utc_fmt)
+
+    base_utc_dt = parse_base_time(utc_time_sample)
+    if base_utc_dt is None:
+        return None
 
     try:
-        obc_td = parse_obc(obc_str)
+        # CSV → 累積秒
+        obc_sec = obc_to_seconds(obc_str)
 
-        # 差分（timedelta）
-        diff = obc_td - base_obc_td
+        # sample（累積秒）
+        base_obc_sec = obc_to_seconds(obc_time_sample)
 
-        # UTCに適用
-        utc_dt = base_utc_dt + diff
+        # Noneが入っていたら計算できないため, 結果をNoneで出力する 
+        if obc_sec is None or base_obc_sec is None:
+            return None
+        
+        #デバッグ
+        #print("obc_str:", obc_str)
+        #print("obc_sec:", obc_sec)
+        #print("base_obc_sec:", base_obc_sec)
 
-        return utc_dt.strftime("%H:%M")
+        # 差分
+        diff_sec = obc_sec - base_obc_sec
+
+        # UTC反映
+        utc_dt = base_utc_dt + timedelta(seconds=diff_sec)
+
+        return utc_dt.strftime("%Y/%m/%d %H:%M:%S")
 
     except:
-        return "00:00"
-
+        return None
 #----------------------------------------------------------------------------------------------------------------
 # main
 
 # データの抽出とOBC Timeの加工を行う
 def process_csv(file_path, columns, non_float_header, obc_time_sample, utc_time_sample):
+    print("=== ENTER process_csv ===") #デバッグ
     with open(file_path, encoding="utf-8") as f:
-        reader = csv.DictReader(f)
+        reader = list(csv.reader(f)) # 一旦すべて読み込み
 
-        extracted_data = {col: [] for col in columns}
+        # --------------------------------------------------
+        # ヘッダーとデータを分離
+        header = reader[0]
+        data_rows = reader[1:]
 
-        # データの格納
-        for row in reader:
+        # 列名 → index の辞書を作成
+        col_index = {
+            org.normalize(col): i for i, col in enumerate(header)
+        }
+        
+        # OBC Timeが小さい順にソート
+        def get_obc(row):
+            idx = col_index.get(org.normalize("OBC Time"))
+
+            if idx is not None and idx < len(row):
+                raw_obc = row[idx]
+            else:
+                raw_obc = None
+
+            converted = obc_to_seconds((raw_obc or "").strip())
+
+            #print("RAW:", raw_obc, "→", converted)
+
+            return converted
+
+        data_rows.sort(key=lambda row: get_obc(row) or float("inf"))
+
+        extracted_data = {} # データ抽出後の格納用リストの初期化
+        seen_obc = set() # 同じOBC Timeのデータを一つのみ使用するための工夫
+
+        for row in data_rows:
+            # OBC Timeが重複するものを削除 (秒単位で判断)
+            obc_value = get_obc(row)
+
+            # 不正データのスキップ
+            if obc_value is None:
+                continue
+            # 重複削除
+            if obc_value in seen_obc:
+                continue
+            seen_obc.add(obc_value)
+
+            # 抽出してデータを格納
             for col in columns:
-                v = (row.get(col) or "").strip()
+
+                idx = col_index.get(org.normalize(col))
+
+                # 値取得（列ズレ対策あり）
+                if idx is None or idx >= len(row):
+                    v = ""
+                else:
+                    v = (row[idx] or "").strip()
+
+                # キーを初期化
+                if col not in extracted_data:
+                    extracted_data[col] = []
 
                 if col in non_float_header:
                     extracted_data[col].append(v)
@@ -77,11 +148,28 @@ def process_csv(file_path, columns, non_float_header, obc_time_sample, utc_time_
                     except:
                         extracted_data[col].append(0)
 
-        # UTC時刻の格納
+        #print("=== BEFORE UTC BLOCK ===") #デバッグ
+        #print("OBC Time count:", len(extracted_data.get("OBC Time", []))) #デバッグ
+
+        # UTC変換
         utc_list = []
-        for t in extracted_data["OBC Time"]:
-            utc_list.append(convert_obc_to_utc(t, obc_time_sample, utc_time_sample))
 
-        extracted_data["UTC Time"] = utc_list
+        # デバッグ用
+        #print("utc_time_sample:", utc_time_sample)
+        #print("parsed UTC:", parse_base_time(utc_time_sample))
+        #print("obc_time_sample:", obc_time_sample)
+        #print("converted:", obc_to_seconds(obc_time_sample))
 
-        return extracted_data
+        for t in extracted_data.get("OBC Time", []):
+            utc_list.append(
+                convert_obc_to_utc(t, obc_time_sample, utc_time_sample)
+            )
+
+        org.dict_append("UTC Time", utc_list, extracted_data)
+   
+    # デバッグ
+    #print("=== merged_list keys ===")
+    #for k in extracted_data.keys():
+        #print(k)
+
+    return extracted_data
