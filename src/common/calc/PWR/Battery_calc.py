@@ -47,3 +47,4 @@ def BAT_calc_result(extracted_list):
     # extracted_listに列を追加
     org.dict_append("Battery_charge", charging_list, extracted_list)
     return extracted_list
+
