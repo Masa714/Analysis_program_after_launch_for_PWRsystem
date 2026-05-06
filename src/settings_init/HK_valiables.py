@@ -68,8 +68,8 @@ columns_ext = [# OBC時刻
             "sunz"
             ]
 
-# 抽出データのヘッダーに単位を付ける(出力データのヘッダーと表記を厳密に一致させること！)
-# 左：HK表記,  右：単位付き
+# 出力データのヘッダーに単位を付ける
+# 左：単位無し,  右：単位付き
 header_map = {
             "curs_sap1_px":"curs_sap1_px [mA]",
             "curs_sap1_py":"curs_sap1_py [mA]",
@@ -82,7 +82,18 @@ header_map = {
             "vols_sap2":"vols_sap2 [V]",
             "vols_2ndbat":"vols_2ndbat [V]",
             "vols_bus":"vols_bus [V]",
-            "temp_strmx":"temp_strmx []",
+            "SAP_generation_px":"SAP_generation_px [mW]",
+            "SAP_generation_py":"SAP_generation_py [mW]",
+            "SAP_generation_pz":"SAP_generation_pz [mW]",
+            "SAP_generation_mx":"SAP_generation_mx [mW]",
+            "SAP_generation_my":"SAP_generation_my [mW]",
+            "SAP_generation_P":"SAP_generation_P [mW]",
+            "SAP_generation_M":"SAP_generation_M [mW]",
+            "SAP_generation_total":"SAP_generation_total [mW]",
+            "Battery_charge":"Battery_charge [mW]",
+            "Bus_consumption":"Bus_consumption [mW]",
+            "budget_check":"budget_check [mW]",
+            "temp_strmx":"temp_strmx [℃]",
             "temp_strmy":"temp_strmy [℃]",
             "temp_strmz":"temp_strmz [℃]",
             "temp_strpx":"temp_strpx [℃]",
@@ -111,8 +122,8 @@ columns_gene = [# 時刻関係
                "SAP_generation_pz [mW]",
                "SAP_generation_mx [mW]",
                "SAP_generation_my [mW]",
-               "SAP_generation_P_total [mW]",
-               "SAP_generation_M_total [mW]",
+               "SAP_generation_P [mW]",
+               "SAP_generation_M [mW]",
                "SAP_generation_total [mW]",
                # 温度関係
                "temp_strmx [℃]",
@@ -135,6 +146,7 @@ columns_BAT = [# 時刻関係
               "curs_bus [mA]",
               "vols_2ndbat [V]",
               "vols_bus [V]",
+              "Battery_charge [mW]",
               # 温度関係
               "temp_strmx [℃]",
               "temp_strmy [℃]",
@@ -154,7 +166,8 @@ columns_budget =  [# 時刻関係
                   # 電源関係
                   "SAP_generation_total [mW]",
                   "Battery_charge [mW]",
-                  "Bus_consumption [mW]"
+                  "Bus_consumption [mW]",
+                  "budget_check [mW]"
                   ]
 
 #--------------------------------------------------------
