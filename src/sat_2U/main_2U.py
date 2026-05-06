@@ -9,7 +9,7 @@ content: main_2U
 import src.settings_init.HK_valiables as HK_able
 import src.common.Data_processing.extract_process_from_Input_csv as input
 import src.common.Data_processing.output_process as output
-import src.common.calc.PWR.battery_calc as bc
+import src.common.calc.PWR.Battery_calc as bc
 import src.common.calc.PWR.Power_budget_calc as bud
 import src.common.calc.PWR.Power_Generation_calc as PG
 #------------------------------------------------------
