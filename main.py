@@ -6,7 +6,6 @@ content: main (このファイルを実行する)
 #------------------------------------------------------------------------------------
 #import
 from pathlib import Path
-import src.settings_init.HK_valiables as able
 import src.sat_1U.main_1U as main_1U
 import src.sat_2U.main_2U as main_2U
 #------------------------------------------------------------------------------------

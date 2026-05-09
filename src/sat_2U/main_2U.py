@@ -12,6 +12,7 @@ import src.common.Data_processing.output_process as output
 import src.common.calc.PWR.Battery_calc as bc
 import src.common.calc.PWR.Power_budget_calc as bud
 import src.common.calc.PWR.Power_Generation_calc as PG
+import src.common.Data_processing.plot.SAP_data_plot as SP
 #------------------------------------------------------
 # main
 
@@ -47,6 +48,10 @@ def analysis_2U(file_path):
     output.csv_output(HK_able.BAT_name_2U, HK_able.columns_BAT, extracted_list)
     # 電力収支関係のcsvファイル出力
     output.csv_output(HK_able.budget_name_2U, HK_able.columns_budget, extracted_list)
+
+    # 4. plot
+    # PWR系
+    SP.sap_plot(extracted_list)
     #-----------------------------------------------------------------------------------------
 
 

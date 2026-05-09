@@ -3,7 +3,6 @@ date: 2026/05/04
 author: ikuta
 this file for extract process from input_csv
 """
-
 #---------------------------------------------------------------------------------
 # import
 
@@ -26,20 +25,51 @@ def parse_base_time(time_str):
 # CSVのOBC時刻の文字列 → float型の累積秒に変換
 # ---------------------------
 
-
 def obc_to_seconds(obc_str):
-
+    # 空文字やNoneの場合は処理せず終了
     if not obc_str:
         return None
 
+    # 前後の空白を削除（" 11:46 " → "11:46"）
     obc_str = obc_str.strip()
 
     try:
-        h, m, s = obc_str.split(":")
+        # ":"で分割（例："11:46:30" → ["11", "46", "30"]）
+        parts = obc_str.split(":")
+
+        # ------------------------------
+        # パターン1：時・分・秒あり（hh:mm:ss）
+        # ------------------------------
+        if len(parts) == 3:
+            h, m, s = parts
+
+        # ------------------------------
+        # パターン2：時・分のみ（hh:mm）
+        # → 秒が無いので0として扱う
+        # ------------------------------
+        elif len(parts) == 2:
+            h, m = parts
+            s = 0   # 秒を0秒として補完
+
+        # ------------------------------
+        # 想定外フォーマット（例："11" など）
+        # ------------------------------
+        else:
+            return None
+
+        # ------------------------------
+        # 時間 → 秒に変換
+        # h：時間 → 秒に変換（×3600）
+        # m：分 → 秒に変換（×60）
+        # s：秒
+        # ------------------------------
         return float(h) * 3600 + float(m) * 60 + float(s)
+
     except Exception as e:
+        # 数値変換などでエラーが出た場合
         print("[OBC ERROR]", obc_str, e)
         return None
+
 
 # OBC → UTC変換関数
 def convert_obc_to_utc(obc_str, obc_time_sample, utc_time_sample):
