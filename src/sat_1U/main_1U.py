@@ -19,42 +19,41 @@ import src.data_process.HK.plot.SAP_data_plot as SP
 # main
 
 def analysis_1U(file_path):
-    
+
     #-----------------------------------------------------------------------------------
     # HKデータ解析
+    if com_val.HK_analysis_enable == 1:
+        # 1. inputのcsvファイルから必要なデータを抽出し, データ取得時のUTC時刻も加えたリストを作成
+        extracted_list = input.process_csv(file_path,  # input_csvファイル名
+                                        head_HK.columns_ext, # 抽出するデータのヘッダー名
+                                        head_HK.non_float_header,  # float変換しないデータ
+                                        com_val.OBC_time_sample_1U, # obc timeの例
+                                        com_val.UTC_time_sample_1U  # utc timeの例
+                                        )
 
-    # 1. inputのcsvファイルから必要なデータを抽出し, データ取得時のUTC時刻も加えたリストを作成
-    extracted_list = input.process_csv(file_path,  # input_csvファイル名
-                                       head_HK.columns_ext, # 抽出するデータのヘッダー名
-                                       head_HK.non_float_header,  # float変換しないデータ
-                                       com_val.OBC_time_sample_1U, # obc timeの例
-                                       com_val.UTC_time_sample_1U  # utc timeの例
-                                       )
+        # 2. 抽出したデータから計算・各種データ処理
 
-    # 2. 抽出したデータから計算・各種データ処理
+        # PWR系
+        # 〇 SAPでの発電量計算 & 計算結果をリストに格納
+        extracted_list = PG.SAP_calc_result(extracted_list)
+        # 〇 バッテリーでの発電量計算 & 計算結果をリストに格納
+        extracted_list = bc.BAT_calc_result(extracted_list)
+        # 〇 電力収支計算 & 計算結果をリストに格納 (これは発電・バッテリー計算結果を格納した後に持ってくること！)
+        extracted_list = bud.Budget_result(extracted_list)
 
-    # PWR系
-    # 〇 SAPでの発電量計算 & 計算結果をリストに格納
-    extracted_list = PG.SAP_calc_result(extracted_list)
-    # 〇 バッテリーでの発電量計算 & 計算結果をリストに格納
-    extracted_list = bc.BAT_calc_result(extracted_list)
-    # 〇 電力収支計算 & 計算結果をリストに格納 (これは発電・バッテリー計算結果を格納した後に持ってくること！)
-    extracted_list = bud.Budget_result(extracted_list)
+        # 3. csvファイルに出力
+        
+        # PWR系
+        # HKのcsv出力 (UTC_TIMEなどを追加)
+        output.reorder_and_insert_utc_then_export(out_HK.HKname_1U, extracted_list)
+        # SAP関係のcsvファイル出力
+        output.csv_output(out_HK.Gene_name_1U, head_HK.columns_gene, extracted_list)
+        # バッテリー関係のcsvファイル出力
+        output.csv_output(out_HK.BAT_name_1U, head_HK.columns_BAT, extracted_list)
+        # 電力収支関係のcsvファイル出力
+        output.csv_output(out_HK.budget_name_1U, head_HK.columns_budget, extracted_list)
 
-    # 3. csvファイルに出力
-    
-    # PWR系
-    # HKのcsv出力 (UTC_TIMEなどを追加)
-    output.reorder_and_insert_utc_then_export(out_HK.HKname_1U, extracted_list)
-    # SAP関係のcsvファイル出力
-    output.csv_output(out_HK.Gene_name_1U, head_HK.columns_gene, extracted_list)
-    # バッテリー関係のcsvファイル出力
-    output.csv_output(out_HK.BAT_name_1U, head_HK.columns_BAT, extracted_list)
-    # 電力収支関係のcsvファイル出力
-    output.csv_output(out_HK.budget_name_1U, head_HK.columns_budget, extracted_list)
-
-    # 4. plot
-    # PWR系
-    SP.sap_plot(extracted_list)
-
+        # 4. plot
+        # PWR系
+        SP.sap_plot(extracted_list)
 

@@ -31,6 +31,9 @@ def eath_SAP_power_plot(extracted_list):
     y_tick_interval=plt_HK.y1_tick_interval, # y軸の目盛り間隔
     x_range=plt_HK.x1_range, # x軸のグラフ範囲
     y_range=plt_HK.y1_range, # y軸のグラフ範囲
+    
+    enable_fit=plt_HK.plot_style, # プロットの種類
+    fitting_lebel=plt_HK.fitting_lebel, # 外挿曲線のフィッティングの緩さ
 
     # 抽出条件：一番古いデータから～分後までのデータ
     condition = lambda df, _: (
@@ -59,6 +62,9 @@ def IV_plot(extracted_list):
     x_range=plt_HK.x1_range, # x軸のグラフ範囲
     y_range=plt_HK.y1_range, # y軸のグラフ範囲
 
+    enable_fit=plt_HK.plot_style, # プロットの種類
+    fitting_lebel=plt_HK.fitting_lebel, # 外挿曲線のフィッティングの緩さ
+
     # 抽出条件：一番古いデータから～分後までのデータ & 太陽ベクトルが0.8以上 (ほぼ正面から日射) & 電圧4V以上
     condition = lambda df, _: (
         (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
@@ -84,6 +90,9 @@ def IV_plot(extracted_list):
     y_tick_interval=plt_HK.y1_tick_interval, # y軸の目盛り間隔
     x_range=plt_HK.x1_range, # x軸のグラフ範囲
     y_range=plt_HK.y1_range, # y軸のグラフ範囲
+
+    enable_fit=plt_HK.plot_style, # プロットの種類
+    fitting_lebel=plt_HK.fitting_lebel, # 外挿曲線のフィッティングの緩さ
 
     # 抽出条件：一番古いデータから～分後までのデータ & 太陽ベクトルが0.8以上 (ほぼ正面から日射) & 電圧4V以上
     condition = lambda df, _: (
@@ -111,6 +120,9 @@ def IV_plot(extracted_list):
     x_range=plt_HK.x1_range, # x軸のグラフ範囲
     y_range=plt_HK.y1_range, # y軸のグラフ範囲
 
+    enable_fit=plt_HK.plot_style, # プロットの種類
+    fitting_lebel=plt_HK.fitting_lebel, # 外挿曲線のフィッティングの緩さ
+
     # 抽出条件：一番古いデータから～分後までのデータ & 太陽ベクトルが0.8以上 (ほぼ正面から日射) & 電圧4V以上
     condition = lambda df, _: (
         (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
@@ -137,6 +149,9 @@ def IV_plot(extracted_list):
     x_range=plt_HK.x1_range, # x軸のグラフ範囲
     y_range=plt_HK.y1_range, # y軸のグラフ範囲
 
+    enable_fit=plt_HK.plot_style, # プロットの種類
+    fitting_lebel=plt_HK.fitting_lebel, # 外挿曲線のフィッティングの緩さ
+
     # 抽出条件：一番古いデータから～分後までのデータ & 太陽ベクトルが-0.8以下 (ほぼ正面から日射) & 電圧4V以上
     condition = lambda df, _: (
         (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
@@ -162,6 +177,9 @@ def IV_plot(extracted_list):
     y_tick_interval=plt_HK.y1_tick_interval, # y軸の目盛り間隔
     x_range=plt_HK.x1_range, # x軸のグラフ範囲
     y_range=plt_HK.y1_range, # y軸のグラフ範囲
+
+    enable_fit=plt_HK.plot_style, # プロットの種類
+    fitting_lebel=plt_HK.fitting_lebel, # 外挿曲線のフィッティングの緩さ
 
     # 抽出条件：一番古いデータから～分後までのデータ & 太陽ベクトルが-0.8以下 (ほぼ正面から日射) & 電圧4V以上
     condition = lambda df, _: (
@@ -192,6 +210,9 @@ def PV_plot(extracted_list):
     x_range=plt_HK.x1_range, # x軸のグラフ範囲
     y_range=plt_HK.y1_range, # y軸のグラフ範囲
 
+    enable_fit=plt_HK.plot_style, # プロットの種類
+    fitting_lebel=plt_HK.fitting_lebel, # 外挿曲線のフィッティングの緩さ
+
     # 抽出条件：一番古いデータから～分後までのデータ & 太陽ベクトルが0.8以上 (ほぼ正面から日射) &電圧4V以上
     condition = lambda df, _: (
         (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
@@ -217,6 +238,9 @@ def PV_plot(extracted_list):
     y_tick_interval=plt_HK.y1_tick_interval, # y軸の目盛り間隔
     x_range=plt_HK.x1_range, # x軸のグラフ範囲
     y_range=plt_HK.y1_range, # y軸のグラフ範囲
+
+    enable_fit=plt_HK.plot_style, # プロットの種類
+    fitting_lebel=plt_HK.fitting_lebel, # 外挿曲線のフィッティングの緩さ
 
     # 抽出条件：一番古いデータから～分後までのデータ & 太陽ベクトルが0.8以上 (ほぼ正面から日射) & 電圧4V以上
     condition = lambda df, _: (
@@ -244,6 +268,9 @@ def PV_plot(extracted_list):
     x_range=plt_HK.x1_range, # x軸のグラフ範囲
     y_range=plt_HK.y1_range, # y軸のグラフ範囲
 
+    enable_fit=plt_HK.plot_style, # プロットの種類
+    fitting_lebel=plt_HK.fitting_lebel, # 外挿曲線のフィッティングの緩さ
+
     # 抽出条件：一番古いデータから～分後までのデータ & 太陽ベクトルが0.8以上 (ほぼ正面から日射) & 電圧4V以上
     condition = lambda df, _: (
         (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
@@ -270,6 +297,9 @@ def PV_plot(extracted_list):
     x_range=plt_HK.x1_range, # x軸のグラフ範囲
     y_range=plt_HK.y1_range, # y軸のグラフ範囲
 
+    enable_fit=plt_HK.plot_style, # プロットの種類
+    fitting_lebel=plt_HK.fitting_lebel, # 外挿曲線のフィッティングの緩さ
+
     # 抽出条件：一番古いデータから～分後までのデータ & 太陽ベクトルが-0.8以下 (ほぼ正面から日射) & 電圧4V以上
     condition = lambda df, _: (
         (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
@@ -295,6 +325,9 @@ def PV_plot(extracted_list):
     y_tick_interval=plt_HK.y1_tick_interval, # y軸の目盛り間隔
     x_range=plt_HK.x1_range, # x軸のグラフ範囲
     y_range=plt_HK.y1_range, # y軸のグラフ範囲
+
+    enable_fit=plt_HK.plot_style, # プロットの種類
+    fitting_lebel=plt_HK.fitting_lebel, # 外挿曲線のフィッティングの緩さ
 
     # 抽出条件：一番古いデータから～分後までのデータ & 太陽ベクトルが0.8以下 (ほぼ正面から日射) & 電圧4V以上
     condition = lambda df, _: (
@@ -324,7 +357,10 @@ def sun_vec_plot(extracted_list):
     x_range=plt_HK.x1_range, # x軸のグラフ範囲
     y_range=plt_HK.y1_range, # y軸のグラフ範囲
 
- # 抽出条件：一番古いデータから～分後までのデータ  
+    enable_fit=plt_HK.plot_style, # プロットの種類
+    fitting_lebel=plt_HK.fitting_lebel, # 外挿曲線のフィッティングの緩さ
+    
+    # 抽出条件：一番古いデータから～分後までのデータ  
     condition = lambda df, _: (
         (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
     )
@@ -351,7 +387,10 @@ def paneltemp_power_sap_plot(extracted_list):
         # 目盛
         x_tick_interval=plt_HK.x1_tick_interval,
         
-         # 抽出条件：一番古いデータから～分後までのデータ & 電圧が4V以上  
+        enable_fit=plt_HK.plot_style, # プロットの種類
+        fitting_lebel=plt_HK.fitting_lebel, # 外挿曲線のフィッティングの緩さ
+        
+        # 抽出条件：一番古いデータから～分後までのデータ & 電圧が4V以上  
         condition = lambda df, _: (
             (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
             &(df["vols_sap1"] >= 4)
@@ -375,7 +414,10 @@ def paneltemp_power_sap_plot(extracted_list):
 
         # 目盛
         x_tick_interval=plt_HK.x1_tick_interval,
-      
+    
+        enable_fit=plt_HK.plot_style, # プロットの種類
+        fitting_lebel=plt_HK.fitting_lebel, # 外挿曲線のフィッティングの緩さ
+
         # 抽出条件：一番古いデータから～分後までのデータ & 電圧が4V以上  
         condition = lambda df, _: (
             (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
@@ -400,6 +442,9 @@ def paneltemp_power_sap_plot(extracted_list):
 
         # 目盛
         x_tick_interval=plt_HK.x1_tick_interval,
+
+        enable_fit=plt_HK.plot_style, # プロットの種類
+        fitting_lebel=plt_HK.fitting_lebel, # 外挿曲線のフィッティングの緩さ
 
         # 抽出条件：一番古いデータから～分後までのデータ & 電圧が4V以上  
         condition = lambda df, _: (

@@ -104,6 +104,37 @@ def convert_obc_to_utc(obc_str, obc_time_sample, utc_time_sample):
 
     except:
         return None
+    
+# おまけ機能 (任意のutcをobcに変換する関数)
+def convert_given_utc_to_obc(wanna_convert_utc, obc_time_sample, utc_time_sample):
+
+    base_utc_dt = parse_base_time(utc_time_sample)
+    if base_utc_dt is None:
+        return None
+
+    try:
+        # UTCをdatetimeに
+        current_utc_dt = parse_base_time(wanna_convert_utc)
+        if current_utc_dt is None:
+            return None
+
+        # base OBC → 秒
+        base_obc_sec = obc_to_seconds(obc_time_sample)
+        if base_obc_sec is None:
+            return None
+
+        # 差分（秒）
+        diff_sec = (current_utc_dt - base_utc_dt).total_seconds()
+
+        # OBC秒に戻す
+        obc_sec = base_obc_sec + diff_sec
+
+        return obc_sec
+
+    except Exception as e:
+        print("[UTC→OBC ERROR]", wanna_convert_utc, e)
+        return None
+
 #----------------------------------------------------------------------------------------------------------------
 # main
 
@@ -205,3 +236,5 @@ def process_csv(file_path, non_float_header, obc_time_sample, utc_time_sample):
         #print(k)
 
     return extracted_data
+
+

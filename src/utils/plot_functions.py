@@ -32,33 +32,38 @@ def plot_from_dict(
     y_tick_interval=None,
     x_range=None,
     y_range=None,
+    
+    enable_fit=None,
+    fitting_lebel=None,
 
     condition=None
 ):
     from statsmodels.nonparametric.smoothers_lowess import lowess  # ✅ LOESS追加
 
     # ✅ LOESS関数
-    def plot_loess(x, y, color):
-        
-        # 空チェック
-        if len(x) == 0:
-            return
+    # 外挿曲線を入れる場合
+    if enable_fit == 1:
+        def plot_loess(x, y, color):
+            
+            # 空チェック
+            if len(x) == 0:
+                return
 
-        if isinstance(x.iloc[0], (pd.Timestamp, np.datetime64)):
-            x_num = mdates.date2num(x)
-        else:
-            x_num = x.values
+            if isinstance(x.iloc[0], (pd.Timestamp, np.datetime64)):
+                x_num = mdates.date2num(x)
+            else:
+                x_num = x.values
 
-        # 必要なら frac 調整
-        smoothed = lowess(y, x_num, frac=0.05, return_sorted=True)
+            # 必要なら frac 調整
+            smoothed = lowess(y, x_num, frac=fitting_lebel, return_sorted=True)
 
-        plt.plot(
-            smoothed[:, 0],
-            smoothed[:, 1],
-            color=color if color else "black",
-            linewidth=2,
-            alpha=0.9
-        )
+            plt.plot(
+                smoothed[:, 0],
+                smoothed[:, 1],
+                color=color if color else "black",
+                linewidth=2,
+                alpha=0.9
+            )
 
     plt.figure()
     
@@ -104,7 +109,8 @@ def plot_from_dict(
         plt.scatter(x, y, label=key, color=color)
 
         # ✅ LOESS追加
-        plot_loess(x, pd.Series(y), color)
+        if enable_fit == 1:
+            plot_loess(x, pd.Series(y), color)
 
     plt.title(graph_title)
 
@@ -167,6 +173,10 @@ def plot_dual_axis(
     # 目盛
     x_tick_interval=None,
 
+    # 外挿曲線のフィッティングについて
+    enable_fit=None,
+    fitting_lebel=None,
+
     # フィルタ条件設定
     condition=None
 ):
@@ -192,26 +202,28 @@ def plot_dual_axis(
         return nice_fraction * (10 ** exponent)
 
     # ✅ LOESS曲線
-    def plot_loess(x, y, ax, color):
-        # datetime対応
-        # 空チェック
-        if len(x) == 0:
-            return
+    # 外挿曲線を挿入する場合
+    if enable_fit == 1:
+        def plot_loess(x, y, ax, color):
+            # datetime対応
+            # 空チェック
+            if len(x) == 0:
+                return
 
-        if isinstance(x.iloc[0], (pd.Timestamp, np.datetime64)):
-            x_num = mdates.date2num(x)
-        else:
-            x_num = x.values
+            if isinstance(x.iloc[0], (pd.Timestamp, np.datetime64)):
+                x_num = mdates.date2num(x)
+            else:
+                x_num = x.values
 
-        smoothed = lowess(y, x_num, frac=0.05, return_sorted=True)
+            smoothed = lowess(y, x_num, frac=fitting_lebel, return_sorted=True)
 
-        ax.plot(
-            smoothed[:, 0],
-            smoothed[:, 1],
-            color=color,
-            linewidth=2,
-            alpha=0.9
-        )
+            ax.plot(
+                smoothed[:, 0],
+                smoothed[:, 1],
+                color=color,
+                linewidth=2,
+                alpha=0.9
+            )
 
     # フォントサイズ
     plt.rcParams.update({
@@ -258,7 +270,8 @@ def plot_dual_axis(
         ax1.scatter(x, y, label=key, color=color, s=10)
 
         # ✅ LOESS追加（線の代替）
-        plot_loess(x, y, ax1, color if color else "black")
+        if enable_fit == 1:
+            plot_loess(x, y, ax1, color if color else "black")
 
     ax1.set_ylabel(y_left_label if y_left_label else "Left Y")
 
@@ -287,7 +300,8 @@ def plot_dual_axis(
             ax2.scatter(x, y, label=key, color=color, marker='x', s=15)
 
             # ✅ LOESS追加
-            plot_loess(x, y, ax2, color if color else "black")
+            if enable_fit == 1:
+                plot_loess(x, y, ax2, color if color else "black")
 
         ax2.set_ylabel(y_right_label if y_right_label else "Right Y")
 
