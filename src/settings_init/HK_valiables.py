@@ -16,8 +16,8 @@ excel_base_time = "1900/01/01 0:00:00.00" # OBC_Timeが0の時のcsvファイル
 OBC_time_sample_1U = "168:43:01.000" # OBCtimeをUTCに変換する際に使用 (HKのcsvにあるOBC Timeを入れないこと！ 時刻表記ではなく, 累積時間表記で記入)
 UTC_time_sample_1U = "2026/05/06 16:41:33.826073" # OBCtimeをUTCに変換する際に使用 (PC Timeを使用)
 # 2U
-OBC_time_sample_2U = "228:12:18.000" # OBCtimeをUTCに変換する際に使用 (HKのcsvにあるOBC Timeを入れないこと！ 時刻表記ではなく, 累積時間表記で記入)
-UTC_time_sample_2U = "2026/05/04 15:22:51.276373" # OBCtimeをUTCに変換する際に使用(PC Timeを使用)
+OBC_time_sample_2U = "371:27:25.000" # OBCtimeをUTCに変換する際に使用 (HKのcsvにあるOBC Timeを入れないこと！ 時刻表記ではなく, 累積時間表記で記入)
+UTC_time_sample_2U = "2026/05/10 14:37:46.763375" # OBCtimeをUTCに変換する際に使用(PC Timeを使用)
 #---------------------------------------------------
 # 2. Output_file_name
 
@@ -245,25 +245,33 @@ columns_budget =  [# 時刻関係
 #PWR
 # 発電量関連
 title_eath_sap = "PWR_eath_sap_vs_UTC" # 各パネルでの発電量の時刻歴
+title_IV_px = "I-Vcurve_px" # px面のI-V曲線
+title_IV_py = "I-Vcurve_py" # px面のI-V曲線
+title_IV_pz = "I-Vcurve_pz" # px面のI-V曲線
+title_IV_mx = "I-Vcurve_mx" # px面のI-V曲線
+title_IV_my = "I-Vcurve_my" # px面のI-V曲線
+title_PV_px = "P-Vcurve_px" # px面のI-V曲線
+title_PV_py = "P-Vcurve_py" # px面のI-V曲線
+title_PV_pz = "P-Vcurve_pz" # px面のI-V曲線
+title_PV_mx = "P-Vcurve_mx" # px面のI-V曲線
+title_PV_my = "P-Vcurve_my" # px面のI-V曲線
+title_suns = "sunvec_vs_UTC" # 太陽ベクトルの時刻歴
+title_temp_power_vs_sunvecx = "temp,power_vs_sunvec_x" # 温度, 各面の生成電力と太陽ベクトルの相関
+title_temp_power_vs_sunvecy = "temp,power_vs_sunvec_y" # 温度, 各面の生成電力と太陽ベクトルの相関
+title_temp_power_vs_sunvecz = "temp,power_vs_sunvec_z" # 温度, 各面の生成電力と太陽ベクトルの相関
+
 
 #------------------------------------------------------
 # axis_label ----------------------------------------------
 time_label = "UTC_time" # 時刻歴の軸ラベル
-power_label = "Power [mW]" # 電力軸の軸ラベル
+curs_label = "Current [mA]" # 電流の軸ラベル
+vols_label = "Voltage [V]" # 電圧の軸ラベル
+power_label = "Power [mW]" # 電力の軸ラベル
+temp_label = "temp [℃]" # 温度の軸ラベル
+vec_label = "unit_vector" # 単位ベクトルの軸ラベル
+
 
 #------------------------------------------------------
-# legend_title -----------------------------------------
-#PWR
-legend_PX = "pwr_sap_px" #px面の発電量
-legend_PY = "pwr_sap_py" #py面の発電量
-legend_PZ = "pwr_sap_pz" #pz面の発電量
-legend_MX = "pwr_sap_mx" #mx面の発電量
-legend_MY = "pwr_sap_my" #my面の発電量
-legend_total = "pwr_sap_total" #全ての面の合計発電量
-legend_suns = "suns_vector" # 太陽センサのベクトル
-
-
-#-----------------------------------------------------
 #plot_color ------------------------------------------
 # 番号が小さい順に色が選択されます
 color_1 = "red"
@@ -271,16 +279,19 @@ color_2 = "blue"
 color_3 = "springgreen"
 color_4 = "orange"
 color_5 = "purple"
+color_6 = "brown"
 
 #-----------------------------------------------------
 # plot_area-------------------------------------------
 # 軸ラベルについては、ここで編集はできないようになっています
 # 各種plotのところから変更をお願いします
 plot_timerange = 100 # 時刻歴について、一番時刻が古いデータから何分間のデータをプロットするのか  TLCとRTCのHKが混ざったときの対策
-x1_tick_interval = 20 # 時刻歴-横軸の目盛り間隔  デフォルトは自動で設定, 自分で設定する際は「interval=数字(分)」で設定
-y1_tick_interval = None # 縦軸の目盛り間隔  デフォルトは自動で設定, 自分で設定する際は「interval=数字」で設定
-y2_tick_interval = None # 2つy軸を使用するときの, 2つ目の縦軸の目盛り間隔  デフォルトは自動で設定, 自分で設定する際は「interval=数字」で設定
-x1_range = None # 時刻歴-横軸のグラフ端　　デフォルトは自動で設定, 自分で設定する際は「range=(min, max)」で設定
+utc_fontsize = 6 # 時刻歴の横軸メモリのフォントサイズ
+time_tick_interval = int(plot_timerange * 0.2) # 時刻歴-横軸の目盛り間隔(整数)  timerangeの5分の1程度がいい, 自分で設定する際は「interval=数字(分)」で設定
+x1_tick_interval = None # 横軸(時刻以外)の目盛り間隔　でフォルトは自動(NONE)で設定　自分で設定する際は「interval=整数」で設定
+y1_tick_interval = None # 縦軸の目盛り間隔  デフォルトは自動で設定, 自分で設定する際は「interval=整数」で設定
+y2_tick_interval = None # 2つy軸を使用するときの, 2つ目の縦軸の目盛り間隔  デフォルトは自動で設定, 自分で設定する際は「interval=整数」で設定
+x1_range = None # 横軸のグラフ端　　デフォルトは自動で設定, 自分で設定する際は「range=(min, max)」で設定
 y1_range = None # 縦軸のグラフ端　　デフォルトは自動で設定, 自分で設定する際は「range=(min, max)」で設定
 y2_range = None # 2つy軸を使用するときの, 2つ目の縦軸のグラフ端　　デフォルトは自動で設定, 自分で設定する際は「range=(min, max)」で設定
 

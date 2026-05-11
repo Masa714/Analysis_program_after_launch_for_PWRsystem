@@ -10,73 +10,100 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import matplotlib.dates as mdates
+import src.settings_init.HK_valiables as HK_able
+from statsmodels.nonparametric.smoothers_lowess import lowess
 #------------------------------------------------------------
 # functions
 
 # 同じx, y軸に任意の種類のグラフを出力する関数
 def plot_from_dict(
     data_dict,
-    x_key,                # x軸にするキー
-    y_keys,               # y軸にするキー（リスト形式で複数設定可能）
-    graph_title="Graph", # タイトル
-    legend_loc="upper left", # 凡例位置（外に出す前提に変更）
+    x_key,                
+    y_keys,              
+    graph_title="Graph",
+    legend_loc="upper left",
     
-    colors=None, # 色指定 (リスト形式で複数設定可能)
+    colors=None,
 
-    x_label=None, # x軸ラベル
-    y_label=None, # y軸ラベル
+    x_label=None,
+    y_label=None,
 
-    x_tick_interval=None, # x軸の目盛り間隔
-    y_tick_interval=None, # y軸の目盛り間隔
-    x_range=None, # x軸のグラフ範囲
-    y_range=None, # y軸のグラフ範囲
+    x_tick_interval=None,
+    y_tick_interval=None,
+    x_range=None,
+    y_range=None,
 
-    condition=None  # プロット条件
+    condition=None
 ):
+    from statsmodels.nonparametric.smoothers_lowess import lowess  # ✅ LOESS追加
+
+    # ✅ LOESS関数
+    def plot_loess(x, y, color):
+        if isinstance(x.iloc[0], (pd.Timestamp, np.datetime64)):
+            x_num = mdates.date2num(x)
+        else:
+            x_num = x.values
+
+        # 必要なら frac 調整
+        smoothed = lowess(y, x_num, frac=0.05, return_sorted=True)
+
+        plt.plot(
+            smoothed[:, 0],
+            smoothed[:, 1],
+            color=color if color else "black",
+            linewidth=2,
+            alpha=0.9
+        )
+
     plt.figure()
     
     # y_keysについて、文字列 → 辞書のヘッダー形式に変換
     if isinstance(y_keys, str):
         y_keys = [y_keys]
 
-    # colorsの処理　(文字列 → ヘッダー形式への変換)
+    # colorsの処理
     if colors is None:
         colors = [None] * len(y_keys)
     elif isinstance(colors, str):
         colors = [colors]
+    
+    # ======================
+    # DataFrame化（list対策）
+    # ======================
+    data_dict = pd.DataFrame(data_dict)
+    if "UTC Time" in data_dict.columns:
+        data_dict["UTC Time"] = pd.to_datetime(data_dict["UTC Time"])
 
     # x軸用データ
-    if x_key == "UTC Time": # 時刻歴(文字列)の場合
-        x = pd.to_datetime(data_dict[x_key]) # 文字列をdatetime型に変換
-    else: # 列に格納されているのが数値の場合
+    if x_key == "UTC Time":
+        x = pd.to_datetime(data_dict[x_key])
+    else:
         x = data_dict[x_key]
 
-    # ★条件フィルタ用maskを初期化（全部True）
+    # mask
     mask = np.ones(len(x), dtype=bool)
-
-    # 条件式による抽出（xも他列もすべてここで判断）
     if condition is not None:
-        mask &= np.array(condition(data_dict, x))  # True / False 配列
+        mask &= np.array(condition(data_dict, x))
 
-    # ★xを切り出し
     x = x[mask]
 
+    # ======================
     # y軸用データ
+    # ======================
     for i, key in enumerate(y_keys):
-        y = data_dict[key]
+        y = np.array(data_dict[key])[mask]
 
-        # xと同じ条件でyも切り出し
-        y = np.array(y)[mask]
-
-        # 色を取り出す
         color = colors[i] if i < len(colors) else None
 
-        # colorを追加
+        # ✅ 点（そのまま）
         plt.scatter(x, y, label=key, color=color)
+
+        # ✅ LOESS追加
+        plot_loess(x, pd.Series(y), color)
 
     plt.title(graph_title)
 
-    # 凡例（グラフ外に表示）
+    # 凡例
     plt.legend(loc=legend_loc, bbox_to_anchor=(1.05, 1), borderaxespad=0)
 
     # 軸ラベル
@@ -90,136 +117,217 @@ def plot_from_dict(
     if y_range is not None:
         plt.ylim(*y_range)
 
+    # ======================
     # 目盛
-    # x軸目盛（時刻と数値の両対応）
+    # ======================
     if x_tick_interval is not None:
         ax = plt.gca()
 
-        # datetime判定
-        if isinstance(x[0], (pd.Timestamp, np.datetime64)):
-            # 時刻用
+        if isinstance(x.iloc[0], (pd.Timestamp, np.datetime64)):
             ax.xaxis.set_major_locator(mdates.MinuteLocator(interval=x_tick_interval))
             ax.xaxis.set_major_formatter(mdates.DateFormatter('%y-%m-%d %H:%M'))
 
-            # フォントサイズ調整
             for label in ax.get_xticklabels():
-                label.set_fontsize(6)
-
+                label.set_fontsize(HK_able.utc_fontsize)
         else:
-            # 数値用
             x_min, x_max = plt.xlim()
             plt.xticks(np.arange(x_min, x_max + x_tick_interval, x_tick_interval))
 
-    # y軸目盛
     if y_tick_interval is not None:
         y_min, y_max = plt.ylim()
         plt.yticks(np.arange(y_min, y_max + y_tick_interval, y_tick_interval))
 
     plt.grid()
 
-    # レイアウト調整（凡例が切れないようにする）
     plt.tight_layout()
-
     plt.show()
 
-
-# y軸が異なる種類のデータをまとめて描画する関数
+# y軸の異なるデータを同じグラフにプロットする関数 (複数種のデータの相関用)
 def plot_dual_axis(
     data_dict,
     x_key,
     y_left_keys,
-    y_right_keys=None,
+    y_right_keys,
     graph_title="Graph",
 
+    # 色を引数で指定できるように
+    left_colors=None,
+    right_colors=None,
+    
+    #軸ラベル
     x_label=None,
     y_left_label=None,
     y_right_label=None,
 
-    # 範囲
-    x_range=None,
-    y_left_range=None,
-    y_right_range=None,
-
     # 目盛
     x_tick_interval=None,
-    y_left_tick_interval=None,
-    y_right_tick_interval=None
+
+    # フィルタ条件設定
+    condition=None
 ):
-    fig, ax1 = plt.subplots()
+    from statsmodels.nonparametric.smoothers_lowess import lowess
 
-    x = data_dict[x_key]
+    # 自動スケール用関数（nice numbers）
+    def nice_step(y_min, y_max, target_div=4):
+        range_val = y_max - y_min
+        raw_step = range_val / target_div
+
+        exponent = np.floor(np.log10(raw_step))
+        fraction = raw_step / (10 ** exponent)
+
+        if fraction <= 1:
+            nice_fraction = 1
+        elif fraction <= 2:
+            nice_fraction = 2
+        elif fraction <= 5:
+            nice_fraction = 5
+        else:
+            nice_fraction = 10
+
+        return nice_fraction * (10 ** exponent)
+
+    # ✅ LOESS曲線
+    def plot_loess(x, y, ax, color):
+        # datetime対応
+        if isinstance(x.iloc[0], (pd.Timestamp, np.datetime64)):
+            x_num = mdates.date2num(x)
+        else:
+            x_num = x.values
+
+        smoothed = lowess(y, x_num, frac=0.05, return_sorted=True)
+
+        ax.plot(
+            smoothed[:, 0],
+            smoothed[:, 1],
+            color=color,
+            linewidth=2,
+            alpha=0.9
+        )
+
+    # フォントサイズ
+    plt.rcParams.update({
+        "font.size": 8,
+        "axes.titlesize": 9,
+        "axes.labelsize": 8,
+        "xtick.labelsize": 8,
+        "ytick.labelsize": 8,
+        "legend.fontsize": 8
+    })
+
+    # 上下2段
+    fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True)
 
     # ======================
-    # 左軸
+    # DataFrame化
     # ======================
-    for key in y_left_keys:
-        y = data_dict[key]
-        ax1.plot(x, y, label=key)
+    data_dict = pd.DataFrame(data_dict)
+    if "UTC Time" in data_dict.columns:
+        data_dict["UTC Time"] = pd.to_datetime(data_dict["UTC Time"])
 
-    ax1.set_xlabel(x_label if x_label else x_key)
+    # ======================
+    # x取得
+    # ======================
+    x = pd.to_datetime(data_dict[x_key]) if x_key == "UTC Time" else data_dict[x_key]
+
+    # ======================
+    # mask作成
+    # ======================
+    mask = np.ones(len(x), dtype=bool)
+    if condition is not None:
+        mask &= np.asarray(condition(data_dict, x), dtype=bool)
+
+    x = x[mask]
+
+    # ======================
+    # 左軸（下側）
+    # ======================
+    for i, key in enumerate(y_left_keys):
+        y = np.array(data_dict[key])[mask]
+        color = left_colors[i] if (left_colors and i < len(left_colors)) else None
+
+        # ✅ 点のみ
+        ax1.scatter(x, y, label=key, color=color, s=10)
+
+        # ✅ LOESS追加（線の代替）
+        plot_loess(x, y, ax1, color if color else "black")
+
     ax1.set_ylabel(y_left_label if y_left_label else "Left Y")
 
-    # 範囲
-    if x_range is not None:
-        ax1.set_xlim(*x_range)
+    if y_left_keys:
+        y_all = np.concatenate([np.array(data_dict[k][mask]) for k in y_left_keys])
+        margin = 0.05 * (y_all.max() - y_all.min() + 1e-9)
+        y_min = y_all.min() - margin
+        y_max = y_all.max() + margin
+        ax1.set_ylim(y_min, y_max)
 
-    if y_left_range is not None:
-        ax1.set_ylim(*y_left_range)
-
-    # 目盛
-    if x_tick_interval is not None:
-        x_min, x_max = ax1.get_xlim()
-        ax1.set_xticks(np.arange(x_min, x_max + x_tick_interval, x_tick_interval))
-
-    if y_left_tick_interval is not None:
-        y_min, y_max = ax1.get_ylim()
-        ax1.set_yticks(np.arange(y_min, y_max + y_left_tick_interval, y_left_tick_interval))
+        # ✅ niceスケール
+        step = nice_step(y_min, y_max)
+        y_min_tick = step * np.floor(y_min / step)
+        y_max_tick = step * np.ceil(y_max / step)
+        ax1.set_yticks(np.arange(y_min_tick, y_max_tick + step, step))
 
     # ======================
-    # 右軸
+    # 右軸（上側）
     # ======================
     if y_right_keys:
-        ax2 = ax1.twinx()
+        for i, key in enumerate(y_right_keys):
+            y = np.array(data_dict[key])[mask]
+            color = right_colors[i] if (right_colors and i < len(right_colors)) else None
 
-        for key in y_right_keys:
-            y = data_dict[key]
-            ax2.plot(x, y, linestyle="--", label=key)
+            # ✅ 点のみ
+            ax2.scatter(x, y, label=key, color=color, marker='x', s=15)
+
+            # ✅ LOESS追加
+            plot_loess(x, y, ax2, color if color else "black")
 
         ax2.set_ylabel(y_right_label if y_right_label else "Right Y")
 
-        # 範囲
-        if y_right_range is not None:
-            ax2.set_ylim(*y_right_range)
+        y_all = np.concatenate([np.array(data_dict[k][mask]) for k in y_right_keys])
+        margin = 0.05 * (y_all.max() - y_all.min() + 1e-9)
+        y_min = y_all.min() - margin
+        y_max = y_all.max() + margin
+        ax2.set_ylim(y_min, y_max)
 
-        # 目盛
-        if y_right_tick_interval is not None:
-            y_min, y_max = ax2.get_ylim()
-            ax2.set_yticks(np.arange(y_min, y_max + y_right_tick_interval, y_right_tick_interval))
+        # ✅ niceスケール
+        step = nice_step(y_min, y_max)
+        y_min_tick = step * np.floor(y_min / step)
+        y_max_tick = step * np.ceil(y_max / step)
+        ax2.set_yticks(np.arange(y_min_tick, y_max_tick + step, step))
 
-        #  凡例まとめる（外に表示）
-        lines1, labels1 = ax1.get_legend_handles_labels()
-        lines2, labels2 = ax2.get_legend_handles_labels()
+    # ======================
+    # x軸目盛
+    # ======================
+    if x_tick_interval is not None:
+        if len(x) > 0 and isinstance(x.iloc[0], (pd.Timestamp, np.datetime64)):
+            ax2.xaxis.set_major_locator(mdates.MinuteLocator(interval=x_tick_interval))
+            ax2.xaxis.set_major_formatter(mdates.DateFormatter('%y-%m-%d %H:%M'))
+        else:
+            x_min, x_max = ax2.get_xlim()
+            ax2.set_xticks(np.arange(x_min, x_max + x_tick_interval, x_tick_interval))
 
-        ax1.legend(
-            lines1 + lines2,
-            labels1 + labels2,
-            loc="upper left",
-            bbox_to_anchor=(1.05, 1),
-            borderaxespad=0
-        )
+    ax2.set_xlabel(x_label if x_label else x_key)
 
-    else:
-        # 凡例（外に表示）
-        ax1.legend(
-            loc="upper left",
-            bbox_to_anchor=(1.05, 1),
-            borderaxespad=0
-        )
+    # ======================
+    # 凡例
+    # ======================
+    handles1, labels1 = ax1.get_legend_handles_labels()
+    handles2, labels2 = ax2.get_legend_handles_labels()
 
-    plt.title(graph_title)
-    plt.grid()
+    fig.legend(
+        handles1 + handles2,
+        labels1 + labels2,
+        loc="lower center",
+        bbox_to_anchor=(0.5, 0.02),
+        ncol=4,
+        fontsize="small"
+    )
 
-    # レイアウト調整（凡例のはみ出し防止）
+    plt.suptitle(graph_title)
+
+    ax1.grid(True)
+    ax2.grid(True)
+
     plt.tight_layout()
+    plt.subplots_adjust(bottom=0.2)
 
     plt.show()
