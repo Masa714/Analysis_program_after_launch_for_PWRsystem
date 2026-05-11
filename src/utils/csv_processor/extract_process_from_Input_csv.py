@@ -8,7 +8,7 @@ this file for extract process from input_csv
 
 import csv
 from datetime import datetime, timedelta
-import src.common.utils.organizing_datalist as org
+import src.utils.organizing_datalist as org
 #---------------------------------------------------------------------------------
 # 以下はOBC TimeをUTCに変換するための関数群
 

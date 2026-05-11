@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import matplotlib.dates as mdates
-import src.settings_init.HK_valiables as HK_able
+import src.settings_init.HK.plot_HK as plt_HK
 from statsmodels.nonparametric.smoothers_lowess import lowess
 #------------------------------------------------------------
 # functions
@@ -128,7 +128,7 @@ def plot_from_dict(
             ax.xaxis.set_major_formatter(mdates.DateFormatter('%y-%m-%d %H:%M'))
 
             for label in ax.get_xticklabels():
-                label.set_fontsize(HK_able.utc_fontsize)
+                label.set_fontsize(plt_HK.utc_fontsize)
         else:
             x_min, x_max = plt.xlim()
             plt.xticks(np.arange(x_min, x_max + x_tick_interval, x_tick_interval))

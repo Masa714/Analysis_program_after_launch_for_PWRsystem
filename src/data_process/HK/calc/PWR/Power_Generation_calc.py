@@ -5,7 +5,7 @@ this file for SAP Power Generation
 """
 #--------------------------------------------------------
 #import
-import src.common.utils.organizing_datalist as org
+import src.utils.organizing_datalist as org
 #---------------------------------------------------------
 # function
 

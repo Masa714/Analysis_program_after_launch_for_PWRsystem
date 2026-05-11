@@ -6,7 +6,7 @@ this file for power budget
 
 #------------------------------------------------------------------
 # import
-import src.common.utils.organizing_datalist as org
+import src.utils.organizing_datalist as org
 #------------------------------------------------------------------
 # function
 

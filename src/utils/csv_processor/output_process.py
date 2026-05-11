@@ -9,8 +9,8 @@ this file for csv output process
 import csv
 from pathlib import Path
 from datetime import datetime
-import src.settings_init.HK_valiables as HK_able
-import src.common.utils.organizing_datalist as org
+import src.settings_init.HK.header_HK as head_HK
+import src.utils.organizing_datalist as org
 #-------------------------------------------------------------
 #function
 
@@ -65,7 +65,7 @@ def csv_output(original_file_name, data_header, merged_list): # 引数：つけ�
 
     # 出力用ヘッダー
     output_header = [
-        HK_able.header_map.get(col, col)
+        head_HK.header_map.get(col, col)
         for col in new_data_header
         ]
 
@@ -83,7 +83,7 @@ def csv_output(original_file_name, data_header, merged_list): # 引数：つけ�
                 None
             )
 
-            new_col = HK_able.header_map.get(col, col)
+            new_col = head_HK.header_map.get(col, col)
 
             if match_key:
                 row[new_col] = merged_list[match_key][i]

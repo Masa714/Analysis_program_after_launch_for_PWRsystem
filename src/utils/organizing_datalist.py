@@ -5,10 +5,6 @@ this file for organizing data list
 """
 
 #-----------------------------------------------------
-# import
-import src.settings_init.HK_valiables as able
-import src.common.Data_processing.extract_process_from_Input_csv as input
-#-----------------------------------------------------
 # functions
 
 # 既存の辞書に指定のヘッダー名で、新しいリストの値を追加する関数

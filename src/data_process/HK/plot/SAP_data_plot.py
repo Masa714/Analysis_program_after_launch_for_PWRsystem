@@ -6,8 +6,8 @@ this file for data plot related to SAP
 
 #--------------------------------------------
 # import 
-import src.common.utils.plot_functions as pf
-import src.settings_init.HK_valiables as HK_able
+import src.utils.plot_functions as pf
+import src.settings_init.HK.plot_HK as plt_HK
 import pandas as pd
 #--------------------------------------------
 # function
@@ -19,22 +19,22 @@ def eath_SAP_power_plot(extracted_list):
     extracted_list,
     "UTC Time",                # x軸にするキー
     ["pwr_sap_px", "pwr_sap_py", "pwr_sap_pz", "pwr_sap_mx", "pwr_sap_my"],          # y軸にするキー
-    graph_title = HK_able.title_eath_sap, # タイトル
+    graph_title = plt_HK.title_eath_sap, # タイトル
     legend_loc = "upper left", # 凡例位置（外に出す前提に変更）
     # グラフの色設定
-    colors = [HK_able.color_1, HK_able.color_2, HK_able.color_3, HK_able.color_4, HK_able.color_5],
+    colors = [plt_HK.color_1, plt_HK.color_2, plt_HK.color_3, plt_HK.color_4, plt_HK.color_5],
 
-    x_label=HK_able.time_label, # x軸ラベル
-    y_label=HK_able.power_label, # y軸ラベル
+    x_label=plt_HK.time_label, # x軸ラベル
+    y_label=plt_HK.power_label, # y軸ラベル
 
-    x_tick_interval=HK_able.time_tick_interval, # x軸の目盛り間隔
-    y_tick_interval=HK_able.y1_tick_interval, # y軸の目盛り間隔
-    x_range=HK_able.x1_range, # x軸のグラフ範囲
-    y_range=HK_able.y1_range, # y軸のグラフ範囲
+    x_tick_interval=plt_HK.time_tick_interval, # x軸の目盛り間隔
+    y_tick_interval=plt_HK.y1_tick_interval, # y軸の目盛り間隔
+    x_range=plt_HK.x1_range, # x軸のグラフ範囲
+    y_range=plt_HK.y1_range, # y軸のグラフ範囲
 
     # 抽出条件：一番古いデータから～分後までのデータ
     condition = lambda df, _: (
-            (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=HK_able.plot_timerange)) 
+            (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
     )    
     )
     
@@ -46,22 +46,22 @@ def IV_plot(extracted_list):
     extracted_list,
     "vols_sap1",                # x軸にするキー
     "curs_sap1_px",          # y軸にするキー
-    graph_title = HK_able.title_IV_px, # タイトル
+    graph_title = plt_HK.title_IV_px, # タイトル
     legend_loc = "upper left", # 凡例位置（外に出す前提に変更）
     # グラフの色設定
-    colors =HK_able.color_1,
+    colors =plt_HK.color_1,
 
-    x_label=HK_able.vols_label, # x軸ラベル
-    y_label=HK_able.curs_label, # y軸ラベル
+    x_label=plt_HK.vols_label, # x軸ラベル
+    y_label=plt_HK.curs_label, # y軸ラベル
 
-    x_tick_interval=HK_able.x1_tick_interval, # x軸の目盛り間隔
-    y_tick_interval=HK_able.y1_tick_interval, # y軸の目盛り間隔
-    x_range=HK_able.x1_range, # x軸のグラフ範囲
-    y_range=HK_able.y1_range, # y軸のグラフ範囲
+    x_tick_interval=plt_HK.x1_tick_interval, # x軸の目盛り間隔
+    y_tick_interval=plt_HK.y1_tick_interval, # y軸の目盛り間隔
+    x_range=plt_HK.x1_range, # x軸のグラフ範囲
+    y_range=plt_HK.y1_range, # y軸のグラフ範囲
 
     # 抽出条件：一番古いデータから～分後までのデータ & 太陽ベクトルが0.8以上 (ほぼ正面から日射) & 電圧4V以上
     condition = lambda df, _: (
-        (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=HK_able.plot_timerange)) 
+        (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
         &(df["sunx"] >= 0.8)
         &(df["vols_sap1"] >= 4)
     )
@@ -72,22 +72,22 @@ def IV_plot(extracted_list):
     extracted_list,
     "vols_sap1",                # x軸にするキー
     "curs_sap1_py",          # y軸にするキー
-    graph_title = HK_able.title_IV_py, # タイトル
+    graph_title = plt_HK.title_IV_py, # タイトル
     legend_loc = "upper left", # 凡例位置（外に出す前提に変更）
     # グラフの色設定
-    colors =HK_able.color_1,
+    colors =plt_HK.color_1,
 
-    x_label=HK_able.vols_label, # x軸ラベル
-    y_label=HK_able.curs_label, # y軸ラベル
+    x_label=plt_HK.vols_label, # x軸ラベル
+    y_label=plt_HK.curs_label, # y軸ラベル
 
-    x_tick_interval=HK_able.x1_tick_interval, # x軸の目盛り間隔
-    y_tick_interval=HK_able.y1_tick_interval, # y軸の目盛り間隔
-    x_range=HK_able.x1_range, # x軸のグラフ範囲
-    y_range=HK_able.y1_range, # y軸のグラフ範囲
+    x_tick_interval=plt_HK.x1_tick_interval, # x軸の目盛り間隔
+    y_tick_interval=plt_HK.y1_tick_interval, # y軸の目盛り間隔
+    x_range=plt_HK.x1_range, # x軸のグラフ範囲
+    y_range=plt_HK.y1_range, # y軸のグラフ範囲
 
     # 抽出条件：一番古いデータから～分後までのデータ & 太陽ベクトルが0.8以上 (ほぼ正面から日射) & 電圧4V以上
     condition = lambda df, _: (
-        (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=HK_able.plot_timerange)) 
+        (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
         &(df["suny"] >= 0.8)
         &(df["vols_sap1"] >= 4)
     )
@@ -98,22 +98,22 @@ def IV_plot(extracted_list):
     extracted_list,
     "vols_sap1",                # x軸にするキー
     "curs_sap1_pz",          # y軸にするキー
-    graph_title = HK_able.title_IV_pz, # タイトル
+    graph_title = plt_HK.title_IV_pz, # タイトル
     legend_loc = "upper left", # 凡例位置（外に出す前提に変更）
     # グラフの色設定
-    colors =HK_able.color_1,
+    colors =plt_HK.color_1,
 
-    x_label=HK_able.vols_label, # x軸ラベル
-    y_label=HK_able.curs_label, # y軸ラベル
+    x_label=plt_HK.vols_label, # x軸ラベル
+    y_label=plt_HK.curs_label, # y軸ラベル
 
-    x_tick_interval=HK_able.x1_tick_interval, # x軸の目盛り間隔
-    y_tick_interval=HK_able.y1_tick_interval, # y軸の目盛り間隔
-    x_range=HK_able.x1_range, # x軸のグラフ範囲
-    y_range=HK_able.y1_range, # y軸のグラフ範囲
+    x_tick_interval=plt_HK.x1_tick_interval, # x軸の目盛り間隔
+    y_tick_interval=plt_HK.y1_tick_interval, # y軸の目盛り間隔
+    x_range=plt_HK.x1_range, # x軸のグラフ範囲
+    y_range=plt_HK.y1_range, # y軸のグラフ範囲
 
     # 抽出条件：一番古いデータから～分後までのデータ & 太陽ベクトルが0.8以上 (ほぼ正面から日射) & 電圧4V以上
     condition = lambda df, _: (
-        (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=HK_able.plot_timerange)) 
+        (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
         &(df["sunz"] >= 0.8)
         &(df["vols_sap1"] >= 4)
     )
@@ -124,22 +124,22 @@ def IV_plot(extracted_list):
     extracted_list,
     "vols_sap2",                # x軸にするキー
     "curs_sap2_mx",          # y軸にするキー
-    graph_title = HK_able.title_IV_mx, # タイトル
+    graph_title = plt_HK.title_IV_mx, # タイトル
     legend_loc = "upper left", # 凡例位置（外に出す前提に変更）
     # グラフの色設定
-    colors =HK_able.color_1,
+    colors =plt_HK.color_1,
 
-    x_label=HK_able.vols_label, # x軸ラベル
-    y_label=HK_able.curs_label, # y軸ラベル
+    x_label=plt_HK.vols_label, # x軸ラベル
+    y_label=plt_HK.curs_label, # y軸ラベル
 
-    x_tick_interval=HK_able.x1_tick_interval, # x軸の目盛り間隔
-    y_tick_interval=HK_able.y1_tick_interval, # y軸の目盛り間隔
-    x_range=HK_able.x1_range, # x軸のグラフ範囲
-    y_range=HK_able.y1_range, # y軸のグラフ範囲
+    x_tick_interval=plt_HK.x1_tick_interval, # x軸の目盛り間隔
+    y_tick_interval=plt_HK.y1_tick_interval, # y軸の目盛り間隔
+    x_range=plt_HK.x1_range, # x軸のグラフ範囲
+    y_range=plt_HK.y1_range, # y軸のグラフ範囲
 
     # 抽出条件：一番古いデータから～分後までのデータ & 太陽ベクトルが-0.8以下 (ほぼ正面から日射) & 電圧4V以上
     condition = lambda df, _: (
-        (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=HK_able.plot_timerange)) 
+        (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
         &(df["sunx"] <= -0.8)
         &(df["vols_sap2"] >= 4)
     )
@@ -150,22 +150,22 @@ def IV_plot(extracted_list):
     extracted_list,
     "vols_sap2",                # x軸にするキー
     "curs_sap2_my",          # y軸にするキー
-    graph_title = HK_able.title_IV_my, # タイトル
+    graph_title = plt_HK.title_IV_my, # タイトル
     legend_loc = "upper left", # 凡例位置（外に出す前提に変更）
     # グラフの色設定
-    colors =HK_able.color_1,
+    colors =plt_HK.color_1,
 
-    x_label=HK_able.vols_label, # x軸ラベル
-    y_label=HK_able.curs_label, # y軸ラベル
+    x_label=plt_HK.vols_label, # x軸ラベル
+    y_label=plt_HK.curs_label, # y軸ラベル
 
-    x_tick_interval=HK_able.x1_tick_interval, # x軸の目盛り間隔
-    y_tick_interval=HK_able.y1_tick_interval, # y軸の目盛り間隔
-    x_range=HK_able.x1_range, # x軸のグラフ範囲
-    y_range=HK_able.y1_range, # y軸のグラフ範囲
+    x_tick_interval=plt_HK.x1_tick_interval, # x軸の目盛り間隔
+    y_tick_interval=plt_HK.y1_tick_interval, # y軸の目盛り間隔
+    x_range=plt_HK.x1_range, # x軸のグラフ範囲
+    y_range=plt_HK.y1_range, # y軸のグラフ範囲
 
     # 抽出条件：一番古いデータから～分後までのデータ & 太陽ベクトルが-0.8以下 (ほぼ正面から日射) & 電圧4V以上
     condition = lambda df, _: (
-        (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=HK_able.plot_timerange)) 
+        (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
         &(df["suny"] <= -0.8)
         &(df["vols_sap2"] >= 4)
     )
@@ -179,22 +179,22 @@ def PV_plot(extracted_list):
     extracted_list,
     "vols_sap1",                # x軸にするキー
     "pwr_sap_px",          # y軸にするキー
-    graph_title = HK_able.title_PV_px, # タイトル
+    graph_title = plt_HK.title_PV_px, # タイトル
     legend_loc = "upper left", # 凡例位置（外に出す前提に変更）
     # グラフの色設定
-    colors =HK_able.color_1,
+    colors =plt_HK.color_1,
 
-    x_label=HK_able.vols_label, # x軸ラベル
-    y_label=HK_able.power_label, # y軸ラベル
+    x_label=plt_HK.vols_label, # x軸ラベル
+    y_label=plt_HK.power_label, # y軸ラベル
 
-    x_tick_interval=HK_able.x1_tick_interval, # x軸の目盛り間隔
-    y_tick_interval=HK_able.y1_tick_interval, # y軸の目盛り間隔
-    x_range=HK_able.x1_range, # x軸のグラフ範囲
-    y_range=HK_able.y1_range, # y軸のグラフ範囲
+    x_tick_interval=plt_HK.x1_tick_interval, # x軸の目盛り間隔
+    y_tick_interval=plt_HK.y1_tick_interval, # y軸の目盛り間隔
+    x_range=plt_HK.x1_range, # x軸のグラフ範囲
+    y_range=plt_HK.y1_range, # y軸のグラフ範囲
 
     # 抽出条件：一番古いデータから～分後までのデータ & 太陽ベクトルが0.8以上 (ほぼ正面から日射) &電圧4V以上
     condition = lambda df, _: (
-        (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=HK_able.plot_timerange)) 
+        (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
         &(df["sunx"] >= 0.8)
         &(df["vols_sap1"] >= 4)
     )
@@ -205,22 +205,22 @@ def PV_plot(extracted_list):
     extracted_list,
     "vols_sap1",                # x軸にするキー
     "pwr_sap_py",          # y軸にするキー
-    graph_title = HK_able.title_PV_py, # タイトル
+    graph_title = plt_HK.title_PV_py, # タイトル
     legend_loc = "upper left", # 凡例位置（外に出す前提に変更）
     # グラフの色設定
-    colors =HK_able.color_1,
+    colors =plt_HK.color_1,
 
-    x_label=HK_able.vols_label, # x軸ラベル
-    y_label=HK_able.power_label, # y軸ラベル
+    x_label=plt_HK.vols_label, # x軸ラベル
+    y_label=plt_HK.power_label, # y軸ラベル
 
-    x_tick_interval=HK_able.x1_tick_interval, # x軸の目盛り間隔
-    y_tick_interval=HK_able.y1_tick_interval, # y軸の目盛り間隔
-    x_range=HK_able.x1_range, # x軸のグラフ範囲
-    y_range=HK_able.y1_range, # y軸のグラフ範囲
+    x_tick_interval=plt_HK.x1_tick_interval, # x軸の目盛り間隔
+    y_tick_interval=plt_HK.y1_tick_interval, # y軸の目盛り間隔
+    x_range=plt_HK.x1_range, # x軸のグラフ範囲
+    y_range=plt_HK.y1_range, # y軸のグラフ範囲
 
     # 抽出条件：一番古いデータから～分後までのデータ & 太陽ベクトルが0.8以上 (ほぼ正面から日射) & 電圧4V以上
     condition = lambda df, _: (
-        (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=HK_able.plot_timerange)) 
+        (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
         &(df["suny"] >= 0.8)
         &(df["vols_sap1"] >= 4)
     )
@@ -231,22 +231,22 @@ def PV_plot(extracted_list):
     extracted_list,
     "vols_sap1",                # x軸にするキー
     "pwr_sap_pz",          # y軸にするキー
-    graph_title = HK_able.title_PV_pz, # タイトル
+    graph_title = plt_HK.title_PV_pz, # タイトル
     legend_loc = "upper left", # 凡例位置（外に出す前提に変更）
     # グラフの色設定
-    colors =HK_able.color_1,
+    colors =plt_HK.color_1,
 
-    x_label=HK_able.vols_label, # x軸ラベル
-    y_label=HK_able.power_label, # y軸ラベル
+    x_label=plt_HK.vols_label, # x軸ラベル
+    y_label=plt_HK.power_label, # y軸ラベル
 
-    x_tick_interval=HK_able.x1_tick_interval, # x軸の目盛り間隔
-    y_tick_interval=HK_able.y1_tick_interval, # y軸の目盛り間隔
-    x_range=HK_able.x1_range, # x軸のグラフ範囲
-    y_range=HK_able.y1_range, # y軸のグラフ範囲
+    x_tick_interval=plt_HK.x1_tick_interval, # x軸の目盛り間隔
+    y_tick_interval=plt_HK.y1_tick_interval, # y軸の目盛り間隔
+    x_range=plt_HK.x1_range, # x軸のグラフ範囲
+    y_range=plt_HK.y1_range, # y軸のグラフ範囲
 
     # 抽出条件：一番古いデータから～分後までのデータ & 太陽ベクトルが0.8以上 (ほぼ正面から日射) & 電圧4V以上
     condition = lambda df, _: (
-        (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=HK_able.plot_timerange)) 
+        (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
         &(df["sunz"] >= 0.8)
         &(df["vols_sap1"] >= 4)
     )
@@ -257,22 +257,22 @@ def PV_plot(extracted_list):
     extracted_list,
     "vols_sap2",                # x軸にするキー
     "pwr_sap_mx",          # y軸にするキー
-    graph_title = HK_able.title_PV_mx, # タイトル
+    graph_title = plt_HK.title_PV_mx, # タイトル
     legend_loc = "upper left", # 凡例位置（外に出す前提に変更）
     # グラフの色設定
-    colors =HK_able.color_1,
+    colors =plt_HK.color_1,
 
-    x_label=HK_able.vols_label, # x軸ラベル
-    y_label=HK_able.power_label, # y軸ラベル
+    x_label=plt_HK.vols_label, # x軸ラベル
+    y_label=plt_HK.power_label, # y軸ラベル
 
-    x_tick_interval=HK_able.x1_tick_interval, # x軸の目盛り間隔
-    y_tick_interval=HK_able.y1_tick_interval, # y軸の目盛り間隔
-    x_range=HK_able.x1_range, # x軸のグラフ範囲
-    y_range=HK_able.y1_range, # y軸のグラフ範囲
+    x_tick_interval=plt_HK.x1_tick_interval, # x軸の目盛り間隔
+    y_tick_interval=plt_HK.y1_tick_interval, # y軸の目盛り間隔
+    x_range=plt_HK.x1_range, # x軸のグラフ範囲
+    y_range=plt_HK.y1_range, # y軸のグラフ範囲
 
     # 抽出条件：一番古いデータから～分後までのデータ & 太陽ベクトルが-0.8以下 (ほぼ正面から日射) & 電圧4V以上
     condition = lambda df, _: (
-        (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=HK_able.plot_timerange)) 
+        (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
         &(df["sunx"] <= -0.8)
         &(df["vols_sap2"] >= 4)
     )
@@ -283,22 +283,22 @@ def PV_plot(extracted_list):
     extracted_list,
     "vols_sap2",                # x軸にするキー
     "pwr_sap_my",          # y軸にするキー
-    graph_title = HK_able.title_PV_my, # タイトル
+    graph_title = plt_HK.title_PV_my, # タイトル
     legend_loc = "upper left", # 凡例位置（外に出す前提に変更）
     # グラフの色設定
-    colors =HK_able.color_1,
+    colors =plt_HK.color_1,
 
-    x_label=HK_able.vols_label, # x軸ラベル
-    y_label=HK_able.power_label, # y軸ラベル
+    x_label=plt_HK.vols_label, # x軸ラベル
+    y_label=plt_HK.power_label, # y軸ラベル
 
-    x_tick_interval=HK_able.x1_tick_interval, # x軸の目盛り間隔
-    y_tick_interval=HK_able.y1_tick_interval, # y軸の目盛り間隔
-    x_range=HK_able.x1_range, # x軸のグラフ範囲
-    y_range=HK_able.y1_range, # y軸のグラフ範囲
+    x_tick_interval=plt_HK.x1_tick_interval, # x軸の目盛り間隔
+    y_tick_interval=plt_HK.y1_tick_interval, # y軸の目盛り間隔
+    x_range=plt_HK.x1_range, # x軸のグラフ範囲
+    y_range=plt_HK.y1_range, # y軸のグラフ範囲
 
     # 抽出条件：一番古いデータから～分後までのデータ & 太陽ベクトルが0.8以下 (ほぼ正面から日射) & 電圧4V以上
     condition = lambda df, _: (
-        (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=HK_able.plot_timerange)) 
+        (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
         &(df["suny"] <= -0.8)
         &(df["vols_sap2"] >= 4)
     )
@@ -311,22 +311,22 @@ def sun_vec_plot(extracted_list):
     extracted_list,
     "UTC Time",                # x軸にするキー
     ["sunx", "suny", "sunz"],        # y軸にするキー
-    graph_title = HK_able.title_suns, # タイトル
+    graph_title = plt_HK.title_suns, # タイトル
     legend_loc = "upper left", # 凡例位置（外に出す前提に変更）
     # グラフの色設定
-    colors = [HK_able.color_1, HK_able.color_2, HK_able.color_3],
+    colors = [plt_HK.color_1, plt_HK.color_2, plt_HK.color_3],
 
-    x_label=HK_able.time_label, # x軸ラベル
-    y_label=HK_able.vec_label, # y軸ラベル
+    x_label=plt_HK.time_label, # x軸ラベル
+    y_label=plt_HK.vec_label, # y軸ラベル
 
-    x_tick_interval=HK_able.time_tick_interval, # x軸の目盛り間隔
-    y_tick_interval=HK_able.y1_tick_interval, # y軸の目盛り間隔
-    x_range=HK_able.x1_range, # x軸のグラフ範囲
-    y_range=HK_able.y1_range, # y軸のグラフ範囲
+    x_tick_interval=plt_HK.time_tick_interval, # x軸の目盛り間隔
+    y_tick_interval=plt_HK.y1_tick_interval, # y軸の目盛り間隔
+    x_range=plt_HK.x1_range, # x軸のグラフ範囲
+    y_range=plt_HK.y1_range, # y軸のグラフ範囲
 
  # 抽出条件：一番古いデータから～分後までのデータ  
     condition = lambda df, _: (
-        (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=HK_able.plot_timerange)) 
+        (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
     )
     )
 
@@ -339,21 +339,21 @@ def paneltemp_power_sap_plot(extracted_list):
         "sunx",
         ["temp_strpx", "temp_strmx"],
         ["pwr_sap_px","pwr_sap_mx"],
-        graph_title=HK_able.title_temp_power_vs_sunvecx,
+        graph_title=plt_HK.title_temp_power_vs_sunvecx,
         
-        left_colors=[HK_able.color_1, HK_able.color_2],
-        right_colors=[HK_able.color_1, HK_able.color_2],
+        left_colors=[plt_HK.color_1, plt_HK.color_2],
+        right_colors=[plt_HK.color_1, plt_HK.color_2],
 
         x_label=None,
-        y_left_label=HK_able.temp_label,
-        y_right_label=HK_able.power_label,
+        y_left_label=plt_HK.temp_label,
+        y_right_label=plt_HK.power_label,
 
         # 目盛
-        x_tick_interval=HK_able.x1_tick_interval,
+        x_tick_interval=plt_HK.x1_tick_interval,
         
          # 抽出条件：一番古いデータから～分後までのデータ & 電圧が4V以上  
         condition = lambda df, _: (
-            (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=HK_able.plot_timerange)) 
+            (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
             &(df["vols_sap1"] >= 4)
     )
     )
@@ -364,21 +364,21 @@ def paneltemp_power_sap_plot(extracted_list):
         "suny",
         ["temp_strpy", "temp_strmy"],
         ["pwr_sap_py", "pwr_sap_my"],
-        graph_title=HK_able.title_temp_power_vs_sunvecy,
+        graph_title=plt_HK.title_temp_power_vs_sunvecy,
 
-        left_colors=[HK_able.color_1, HK_able.color_2],
-        right_colors=[HK_able.color_1, HK_able.color_2],
+        left_colors=[plt_HK.color_1, plt_HK.color_2],
+        right_colors=[plt_HK.color_1, plt_HK.color_2],
 
         x_label=None,
-        y_left_label=HK_able.temp_label,
-        y_right_label=HK_able.power_label,
+        y_left_label=plt_HK.temp_label,
+        y_right_label=plt_HK.power_label,
 
         # 目盛
-        x_tick_interval=HK_able.x1_tick_interval,
+        x_tick_interval=plt_HK.x1_tick_interval,
       
         # 抽出条件：一番古いデータから～分後までのデータ & 電圧が4V以上  
         condition = lambda df, _: (
-            (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=HK_able.plot_timerange)) 
+            (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
             &(df["vols_sap1"] >= 4)
     )
     )
@@ -389,21 +389,21 @@ def paneltemp_power_sap_plot(extracted_list):
         "sunz",
         ["temp_strpz", "temp_strmz"],
         ["pwr_sap_pz"],
-        graph_title=HK_able.title_temp_power_vs_sunvecz,
+        graph_title=plt_HK.title_temp_power_vs_sunvecz,
 
-        left_colors=[HK_able.color_1, HK_able.color_2],
-        right_colors=[HK_able.color_1],
+        left_colors=[plt_HK.color_1, plt_HK.color_2],
+        right_colors=[plt_HK.color_1],
 
         x_label=None,
-        y_left_label=HK_able.temp_label,
-        y_right_label=HK_able.power_label,
+        y_left_label=plt_HK.temp_label,
+        y_right_label=plt_HK.power_label,
 
         # 目盛
-        x_tick_interval=HK_able.x1_tick_interval,
+        x_tick_interval=plt_HK.x1_tick_interval,
 
         # 抽出条件：一番古いデータから～分後までのデータ & 電圧が4V以上  
         condition = lambda df, _: (
-            (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=HK_able.plot_timerange)) 
+            (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
             &(df["vols_sap1"] >= 4)
     )
     )
