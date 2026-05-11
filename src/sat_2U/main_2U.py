@@ -22,7 +22,7 @@ def analysis_2U(file_path):
     
     #-----------------------------------------------------------------------------------
     # HKデータ解析
-    if com_val.HK_analysis_enable == 1:
+    if com_val.HK_analysis_enable == 1 and "HK" in file_path.name:
         # 1. inputのcsvファイルから必要なデータを抽出し, データ取得時のUTC時刻も加えたリストを作成
         extracted_list = input.process_csv(file_path,  # input_csvファイル名
                                         head_HK.non_float_header,  # float変換しないデータ
@@ -57,4 +57,14 @@ def analysis_2U(file_path):
         SP.sap_plot(extracted_list)
     
     #-----------------------------------------------------------------------------------
+    # AOCSデータ解析
+    if com_val.AOCS_analysis_enable == 1:
+    # 1. inputのcsvファイルから必要なデータを抽出し, データ取得時のUTC時刻も加えたリストを作成
+        extracted_list = input.process_csv(file_path,  # input_csvファイル名
+                                        head_HK.non_float_header,  # float変換しないデータ
+                                        com_val.OBC_time_sample_2U, # obc timeの例
+                                        com_val.UTC_time_sample_2U  # utc timeの例
+                                        )
+
+
 

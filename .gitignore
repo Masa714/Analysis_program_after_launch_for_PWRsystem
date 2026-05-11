@@ -1,9 +1,12 @@
-data/input_csv/*
-data/output_csv/*
+data/input/1U/*
+data/output/1U/*
+data/input/2U/*
+data/output/2U/*
 **/__pycache__/**
 
 
 # ただしプレースホルダーは除外（= 追跡する）
-!data/input_csv/*.txt
-!data/output_csv/*.txt
-
+!data/input/1U/*.txt
+!data/output/1U/*.txt
+!data/input/2U/*.txt
+!data/output/2U/*.txt

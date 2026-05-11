@@ -9,6 +9,7 @@ this file for extract process from input_csv
 import csv
 from datetime import datetime, timedelta
 import src.utils.organizing_datalist as org
+import src.settings_init.common_valiables as com_val
 #---------------------------------------------------------------------------------
 # 以下はOBC TimeをUTCに変換するための関数群
 
@@ -135,9 +136,6 @@ def convert_given_utc_to_obc(wanna_convert_utc, obc_time_sample, utc_time_sample
         print("[UTC→OBC ERROR]", wanna_convert_utc, e)
         return None
 
-#----------------------------------------------------------------------------------------------------------------
-# main
-
 # データの抽出とOBC Timeの加工を行う
 def process_csv(file_path, non_float_header, obc_time_sample, utc_time_sample):
     #print("=== ENTER process_csv ===") #デバッグ
@@ -228,7 +226,30 @@ def process_csv(file_path, non_float_header, obc_time_sample, utc_time_sample):
                 convert_obc_to_utc(t, obc_time_sample, utc_time_sample)
             )
 
-        org.dict_append("UTC Time", utc_list, extracted_data)
+        
+        # ======================
+        # UTC列を5列目に挿入
+        # ======================
+        new_data = {}
+
+        keys = list(extracted_data.keys())
+
+        # UTCを入れる位置（5列目）
+        insert_index = 4
+
+        for i, key in enumerate(keys):
+            if i == insert_index:
+                new_data["UTC Time"] = utc_list
+
+            new_data[key] = extracted_data[key]
+
+        # もし元の列数 < 5 の場合は最後に付ける
+        if "UTC Time" not in new_data:
+            new_data["UTC Time"] = utc_list
+
+        # ✅ 差し替え
+        extracted_data = new_data
+
    
     # デバッグ
     #print("=== merged_list keys ===")
@@ -237,4 +258,25 @@ def process_csv(file_path, non_float_header, obc_time_sample, utc_time_sample):
 
     return extracted_data
 
+#----------------------------------------------------------------------------------------------------------------
+# main
 
+# csvを読み込んでUTC Timeを追加する関数
+def read_csv_and_add_utc(data_dir, obc_time_sample, utc_time_sample):
+    all_data = []
+
+    for file_path in data_dir.glob("*.csv"):
+
+        data = process_csv(
+            file_path,
+            com_val.non_float_header,
+            obc_time_sample,
+            utc_time_sample
+        )
+
+        all_data.append({
+            "name": file_path.stem,  # ファイル名保存(読み込んだcsvファイルの拡張子なし版)
+            "data": data # ファイルデータ
+        })
+
+    return all_data

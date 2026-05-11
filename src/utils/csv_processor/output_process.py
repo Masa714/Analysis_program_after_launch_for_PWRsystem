@@ -7,6 +7,7 @@ this file for csv output process
 #-------------------------------------------------------------
 # import
 import csv
+import pandas as pd
 from pathlib import Path
 from datetime import datetime
 import src.settings_init.HK.header_HK as head_HK
@@ -40,13 +41,11 @@ def create_filename_with_utc(original_file_name, merged_list):
     new_name = f"{time_str}_{original_file_name}.csv"
 
     return new_name
-#-------------------------------------------------------------------
-# main
 
-# csvにデータを格納する関数
+# csvにデータを格納する関数 (ファイル名, ヘッダー設定可能, 一番古いデータの時刻が名前でわかる)
 def csv_output(original_file_name, data_header, merged_list): # 引数：つけたい名前, 格納するデータのヘッダーリスト, データが格納されているリスト
     # 出力フォルダパスの指定
-    output_dir = Path(__file__).resolve().parents[3] / "data"/"Output_csv"
+    output_dir = Path(__file__).resolve().parents[3] / "data"/"Output"
     # フォルダが存在しないときにエラーを出す (デバッグ用)
     if not output_dir.exists():
         raise FileNotFoundError(f"Output folder not found: {output_dir}")
@@ -100,55 +99,52 @@ def csv_output(original_file_name, data_header, merged_list): # 引数：つけ�
         writer.writeheader()  # ヘッダー書き込み
         writer.writerows(rows)
 
-# 元のcsvファイルに変換したUTC Timeだけ足して出力
-def reorder_and_insert_utc_then_export(file_name, merged_list):
-    
-    # 出力フォルダパスの指定
-    output_dir = Path(__file__).resolve().parents[3] / "data"/"Output_csv"
-    # フォルダが存在しないときにエラーを出す (デバッグ用)
+
+# 与えられた名前のファイルを出力する関数(csvに対応, 一番シンプル)
+def original_name_file(name, data):
+
+    # 名前に1Uの文字が入るとき
+    if "1U" in name:
+        # 出力フォルダパスの指定
+        output_dir = Path(__file__).resolve().parents[3] / "data" / "Output" / "1U"
+    # 名前に2Uの文字が入るとき
+    elif "2U" in name:
+        output_dir = Path(__file__).resolve().parents[3] / "data" / "Output" / "2U"
+
+    # フォルダが存在しないときにエラー（または作成でもOK）
     if not output_dir.exists():
         raise FileNotFoundError(f"Output folder not found: {output_dir}")
-    
-    # ======================
-    # 元キー取得
-    # ======================
-    keys = list(merged_list.keys())
+        # ↓自動作成にするならこっち
+        # output_dir.mkdir(parents=True, exist_ok=True)
 
-    # ======================
-    # UTC Timeの位置調整
-    # ======================
-    if "UTC Time" not in keys:
-        raise ValueError("merged_list に 'UTC Time' が存在しません")
+    # ファイル名
+    file_name = name
 
-    # 一旦削除
-    keys.remove("UTC Time")
-
-    # ✅ 2列目に挿入
-    keys.insert(1, "UTC Time")
-
-    # ファイル名の指定
-    file_name = create_filename_with_utc(file_name, merged_list)
     output_file = output_dir / file_name
 
     # ======================
     # 行数
     # ======================
-    num_rows = len(next(iter(merged_list.values())))
+    num_rows = len(next(iter(data.values())))
+
+    # ======================
+    # ヘッダー
+    # ======================
+    headers = list(data.keys())
 
     # ======================
     # 行データ作成
     # ======================
     rows = []
+
     for i in range(num_rows):
         row = {}
 
-        for k in keys:
-            values = merged_list.get(k, [])
-
-            if i < len(values):
-                row[k] = values[i]
+        for key in headers:
+            if i < len(data[key]):
+                row[key] = data[key][i]
             else:
-                row[k] = ""
+                row[key] = ""
 
         rows.append(row)
 
@@ -156,9 +152,59 @@ def reorder_and_insert_utc_then_export(file_name, merged_list):
     # CSV出力
     # ======================
     with open(output_file, "w", newline="", encoding="utf-8-sig") as f:
-        writer = csv.DictWriter(f, fieldnames=keys)
+        writer = csv.DictWriter(f, fieldnames=headers)
         writer.writeheader()
-        writer.writerows(rows) 
+        writer.writerows(rows)
+
+# Excelファイルで出力する関数
+def output_excel(name, data):
+
+    # ======================
+    # 出力フォルダ分岐
+    # ======================
+    if "1U" in name:
+        output_dir = Path(__file__).resolve().parents[3] / "data" / "Output" / "1U"
+    elif "2U" in name:
+        output_dir = Path(__file__).resolve().parents[3] / "data" / "Output" / "2U"
+
+    # フォルダがなければ作る（おすすめ）
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    # ファイル名
+    output_file = output_dir / name
+
+    # ======================
+    # dict → DataFrame
+    # ======================
+    df = pd.DataFrame(data)
+
+    # ======================
+    # Excel出力
+    # ======================
+    df.to_excel(output_file, index=False)
+
+# 1度格納した値にUTC時刻を追加したものを、そのまま出力する関数 (csvとxlsx)
+def export_all_data(all_data):
+    for item in all_data:
+
+        name = item["name"]          # ← stem
+        data = item["data"]
+
+        # ファイル名(拡張子込み)
+        file_name1 = f"{name}.csv"
+        file_name2 = f"{name}.xlsx"
+    
+        # csv出力
+        original_name_file(
+            name=file_name1,
+            data=data
+        )
+        # xlsx出力
+        output_excel(
+            name=file_name2,
+            data=data
+        )
+
 
 
 

@@ -22,7 +22,7 @@ def analysis_1U(file_path):
 
     #-----------------------------------------------------------------------------------
     # HKデータ解析
-    if com_val.HK_analysis_enable == 1:
+    if com_val.HK_analysis_enable == 1 and "HK" in file_path.name :
         # 1. inputのcsvファイルから必要なデータを抽出し, データ取得時のUTC時刻も加えたリストを作成
         extracted_list = input.process_csv(file_path,  # input_csvファイル名
                                         head_HK.columns_ext, # 抽出するデータのヘッダー名
