@@ -7,6 +7,9 @@ this file for output_file_name
 #---------------------------------------------------
 # Output_file_name
 
+# HK出力の時のcsvファイル
+HKname_1U = "HK_1U"
+HKname_2U = "HK_2U"
 # 発電量関係のcsvファイル
 Gene_name_1U = "SAP_generation_1U"
 Gene_name_2U = "SAP_generation_2U"

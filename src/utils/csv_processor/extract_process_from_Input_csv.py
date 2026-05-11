@@ -108,7 +108,7 @@ def convert_obc_to_utc(obc_str, obc_time_sample, utc_time_sample):
 # main
 
 # データの抽出とOBC Timeの加工を行う
-def process_csv(file_path, columns, non_float_header, obc_time_sample, utc_time_sample):
+def process_csv(file_path, non_float_header, obc_time_sample, utc_time_sample):
     #print("=== ENTER process_csv ===") #デバッグ
     with open(file_path, encoding="utf-8") as f:
         reader = list(csv.reader(f)) # 一旦すべて読み込み
@@ -118,6 +118,8 @@ def process_csv(file_path, columns, non_float_header, obc_time_sample, utc_time_
         header = reader[0]
         data_rows = reader[1:]
 
+        columns = header
+        
         # 列名 → index の辞書を作成
         col_index = {
             org.normalize(col): i for i, col in enumerate(header)

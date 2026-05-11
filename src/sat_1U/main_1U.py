@@ -44,6 +44,8 @@ def analysis_1U(file_path):
     # 3. csvファイルに出力
     
     # PWR系
+    # HKのcsv出力 (UTC_TIMEなどを追加)
+    output.reorder_and_insert_utc_then_export(out_HK.HKname_1U, extracted_list)
     # SAP関係のcsvファイル出力
     output.csv_output(out_HK.Gene_name_1U, head_HK.columns_gene, extracted_list)
     # バッテリー関係のcsvファイル出力

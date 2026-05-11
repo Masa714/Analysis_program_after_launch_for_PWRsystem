@@ -25,7 +25,6 @@ def analysis_2U(file_path):
 
     # 1. inputのcsvファイルから必要なデータを抽出し, データ取得時のUTC時刻も加えたリストを作成
     extracted_list = input.process_csv(file_path,  # input_csvファイル名
-                                       head_HK.columns_ext, # 抽出するデータのヘッダー名
                                        head_HK.non_float_header,  # float変換しないデータ
                                        com_val.OBC_time_sample_2U, # obc timeの例
                                        com_val.UTC_time_sample_2U  # utc timeの例
@@ -44,6 +43,8 @@ def analysis_2U(file_path):
     # 3. csvファイルに出力
     
     # PWR系
+    # HKのcsv出力 (UTC_TIMEなどを追加)
+    output.reorder_and_insert_utc_then_export(out_HK.HKname_2U, extracted_list)
     # SAP関係のcsvファイル出力
     output.csv_output(out_HK.Gene_name_2U, head_HK.columns_gene, extracted_list)
     # バッテリー関係のcsvファイル出力

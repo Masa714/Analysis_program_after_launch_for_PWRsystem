@@ -10,46 +10,6 @@ this file for header_HK
 # 抽出方法について　(基本はfloatとして抽出される)
 non_float_header = ["OBC Time"] # floatに変換してほしくないものを記載 (時刻など)
 
-# 抽出するデータについて (HKの表記に合わせる)
-columns_ext = [# OBC時刻
-            "OBC Time",
-            # 電源関係
-            "curs_sap1_px",
-            "curs_sap1_py",
-            "curs_sap1_pz",
-            "curs_sap2_mx",
-            "curs_sap2_my",
-            "curs_2ndbat",
-            "curs_bus",
-            "curs_mtqx", # MTQA_X
-            "curs_mtqy", # MTQA_Y
-            "curs_mtqz1", # MTQA_Z
-            "curs_mtqz2", # MTQO
-            "curs_mtqz3", # MTQO
-            "curs_mtqz4", # MTQO
-            "vols_mtqa",
-            "vols_mtqo_plasma",
-            "vols_sap1",
-            "vols_sap2",
-            "vols_2ndbat",
-            "vols_bus",
-            # 温度関係
-            "temp_strmx",
-            "temp_strmy",
-            "temp_strmz",
-            "temp_strpx",
-            "temp_strpy",
-            "temp_strpz",
-            "temp_2ndbat1",
-            "temp_2ndbat2",
-            "temp_2ndbat3",
-            "temp_2ndbat4",
-            # 太陽センサ(太陽方向)
-            "sunx",
-            "suny",
-            "sunz"
-            ]
-
 # データを出力する際に, ヘッダーに単位を付ける  (内部処理には左側の文字列を使用している) 
 # 新しく項目を追加するときは, ここと下のextractリストに追加すること！)
 # 左：単位無し,  右：単位付き
