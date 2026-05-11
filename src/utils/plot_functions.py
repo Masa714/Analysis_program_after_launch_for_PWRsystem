@@ -39,6 +39,11 @@ def plot_from_dict(
 
     # ✅ LOESS関数
     def plot_loess(x, y, color):
+        
+        # 空チェック
+        if len(x) == 0:
+            return
+
         if isinstance(x.iloc[0], (pd.Timestamp, np.datetime64)):
             x_num = mdates.date2num(x)
         else:
@@ -189,6 +194,10 @@ def plot_dual_axis(
     # ✅ LOESS曲線
     def plot_loess(x, y, ax, color):
         # datetime対応
+        # 空チェック
+        if len(x) == 0:
+            return
+
         if isinstance(x.iloc[0], (pd.Timestamp, np.datetime64)):
             x_num = mdates.date2num(x)
         else:
