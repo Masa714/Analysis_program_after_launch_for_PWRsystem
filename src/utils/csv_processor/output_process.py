@@ -10,13 +10,10 @@ import csv
 import pandas as pd
 from pathlib import Path
 from datetime import datetime
-import src.settings_init.HK.header_HK as head_HK
-import src.utils.organizing_datalist as org
 #-------------------------------------------------------------
 #function
 
 # 格納されたデータのうち、最初の行のUTC時刻をファイル名に記録するための関数
-
 def create_filename_with_utc(original_file_name, merged_list):
 
     # UTCの1行目（ヘッダー除いた最初）
@@ -42,85 +39,48 @@ def create_filename_with_utc(original_file_name, merged_list):
 
     return new_name
 
-# csvにデータを格納する関数 (ファイル名, ヘッダー設定可能, 一番古いデータの時刻が名前でわかる)
-def csv_output(original_file_name, data_header, merged_list): # 引数：つけたい名前, 格納するデータのヘッダーリスト, データが格納されているリスト
-    # 出力フォルダパスの指定
-    output_dir = Path(__file__).resolve().parents[3] / "data"/"Output"
-    # フォルダが存在しないときにエラーを出す (デバッグ用)
-    if not output_dir.exists():
-        raise FileNotFoundError(f"Output folder not found: {output_dir}")
+# CSVデータを整理・加工して、条件ごとに必要な形でCSVやExcelに出力するデータ処理のベースコード
+def export_data(name, header_list, data, use_utc_name=False, base_name=None):
+    
+    # ======================
+    # ファイル名決定
+    # ======================
+    # base_nameが指定されていればそれを使う
+    if base_name is not None:
+        name_to_use = base_name
+    else:
+        name_to_use = name
 
-    # ファイル名の指定
-    file_name = create_filename_with_utc(original_file_name, merged_list)
-    output_file = output_dir / file_name
-
-    # 行数（1列目基準)
-    num_rows = len(next(iter(merged_list.values())))
-    # valiablesで設定したデータヘッダーのうち、リストに存在するデータのみ使用する
-    new_data_header = [
-        col for col in data_header
-        if org.normalize(col) in [org.normalize(k) for k in merged_list.keys()]
-    ]
-
-    # 出力用ヘッダー
-    output_header = [
-        head_HK.header_map.get(col, col)
-        for col in new_data_header
-        ]
-
-    #data_header = list(merged_list.keys()) #デバッグ用
-
-    # 行データ作成
-    rows = []
-    for i in range(num_rows):
-        row = {}
-        for col in new_data_header:
-
-            # 対応するkeyを探す
-            match_key = next(
-                (k for k in merged_list.keys() if org.normalize(k) == org.normalize(col)),
-                None
-            )
-
-            new_col = head_HK.header_map.get(col, col)
-
-            if match_key:
-                row[new_col] = merged_list[match_key][i]
-            else:
-                row[new_col] = ""
-
-        rows.append(row)
-
-
-    # CSV出力
-    with open(output_file, "w", newline="", encoding="utf-8-sig") as f:
-        writer = csv.DictWriter(f, fieldnames=output_header, delimiter=",")
-
-        writer.writeheader()  # ヘッダー書き込み
-        writer.writerows(rows)
-
-
-# 与えられた名前のファイルを出力する関数(csvに対応, 一番シンプル)
-def original_name_file(name, data):
-
-    # 名前に1Uの文字が入るとき
-    if "1U" in name:
-        # 出力フォルダパスの指定
+    # ======================
+    # 出力フォルダ分岐
+    # ======================
+    if "1U" in name_to_use:
         output_dir = Path(__file__).resolve().parents[3] / "data" / "Output" / "1U"
-    # 名前に2Uの文字が入るとき
-    elif "2U" in name:
+    elif "2U" in name_to_use:
         output_dir = Path(__file__).resolve().parents[3] / "data" / "Output" / "2U"
+    else:
+        output_dir = Path(__file__).resolve().parents[3] / "data" / "Output" / "others"
 
-    # フォルダが存在しないときにエラー（または作成でもOK）
-    if not output_dir.exists():
-        raise FileNotFoundError(f"Output folder not found: {output_dir}")
-        # ↓自動作成にするならこっち
-        # output_dir.mkdir(parents=True, exist_ok=True)
+    output_dir.mkdir(parents=True, exist_ok=True)
 
-    # ファイル名
-    file_name = name
+    # 拡張子除去
+    name_to_use = name_to_use.replace(".csv", "").replace(".xlsx", "")
 
-    output_file = output_dir / file_name
+    # UTC付きファイル名処理
+    if use_utc_name:
+        file_name_csv = create_filename_with_utc(name_to_use, data)
+        file_name_xlsx = file_name_csv.replace(".csv", ".xlsx")
+    else:
+        file_name_csv = f"{name_to_use}.csv"
+        file_name_xlsx = f"{name_to_use}.xlsx"
+
+    # ======================
+    # ヘッダー処理
+    # ======================
+    if header_list is None:
+        headers = list(data.keys())
+    else:
+        headers = [col for col in header_list if col in data]
 
     # ======================
     # 行数
@@ -128,84 +88,62 @@ def original_name_file(name, data):
     num_rows = len(next(iter(data.values())))
 
     # ======================
-    # ヘッダー
-    # ======================
-    headers = list(data.keys())
-
-    # ======================
     # 行データ作成
     # ======================
     rows = []
-
     for i in range(num_rows):
         row = {}
-
         for key in headers:
-            if i < len(data[key]):
-                row[key] = data[key][i]
-            else:
-                row[key] = ""
-
+            values = data.get(key, [])
+            row[key] = values[i] if i < len(values) else ""
         rows.append(row)
 
     # ======================
     # CSV出力
     # ======================
-    with open(output_file, "w", newline="", encoding="utf-8-sig") as f:
+    csv_file = output_dir / file_name_csv
+
+    with open(csv_file, "w", newline="", encoding="utf-8-sig") as f:
         writer = csv.DictWriter(f, fieldnames=headers)
         writer.writeheader()
         writer.writerows(rows)
 
-# Excelファイルで出力する関数
-def output_excel(name, data):
-
-    # ======================
-    # 出力フォルダ分岐
-    # ======================
-    if "1U" in name:
-        output_dir = Path(__file__).resolve().parents[3] / "data" / "Output" / "1U"
-    elif "2U" in name:
-        output_dir = Path(__file__).resolve().parents[3] / "data" / "Output" / "2U"
-
-    # フォルダがなければ作る（おすすめ）
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    # ファイル名
-    output_file = output_dir / name
-
-    # ======================
-    # dict → DataFrame
-    # ======================
-    df = pd.DataFrame(data)
-
     # ======================
     # Excel出力
     # ======================
-    df.to_excel(output_file, index=False)
+    xlsx_file = output_dir / file_name_xlsx
 
-# 1度格納した値にUTC時刻を追加したものを、そのまま出力する関数 (csvとxlsx)
-def export_all_data(all_data):
-    for item in all_data:
+    df = pd.DataFrame({key: data[key] for key in headers})
+    df.to_excel(xlsx_file, index=False)
 
-        name = item["name"]          # ← stem
-        data = item["data"]
+# 実際に値をcsv, xlsxで出力する関数
+# 引数：データリスト, 出力するヘッダーのリスト, 名前の前に一番古いデータのutc時刻を付けるか, 任意で付けたい名前 (inputのcsvと同じ名前にしたいときはNone)
+def output_csv_excel(all_data_list, header_list=None, use_utc_name=False, base_name=None):
 
-        # ファイル名(拡張子込み)
-        file_name1 = f"{name}.csv"
-        file_name2 = f"{name}.xlsx"
-    
-        # csv出力
-        original_name_file(
-            name=file_name1,
-            data=data
+    # ======================
+    # ✅ パターン①：複数ファイル（list）
+    # ======================
+    if isinstance(all_data_list, list):
+
+        for item in all_data_list:
+
+            export_data(
+                name=item["name"],
+                base_name=base_name,
+                header_list=header_list,
+                data=item["data"],
+                use_utc_name=use_utc_name
+            )
+
+    # ======================
+    # ✅ パターン②：単一ファイル（dict）
+    # ======================
+    elif isinstance(all_data_list, dict):
+
+        export_data(
+            name="single_file",  # ← 必要ならここ調整
+            base_name=base_name,
+            header_list=header_list,
+            data=all_data_list,
+            use_utc_name=use_utc_name
         )
-        # xlsx出力
-        output_excel(
-            name=file_name2,
-            data=data
-        )
-
-
-
-
-

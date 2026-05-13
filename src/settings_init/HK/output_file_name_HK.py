@@ -6,6 +6,7 @@ this file for output_file_name
 
 #---------------------------------------------------
 # Output_file_name
+# 1U, 2Uを名前に入れること！
 
 # HK出力の時のcsvファイル
 HKname_1U = "HK_1U"
