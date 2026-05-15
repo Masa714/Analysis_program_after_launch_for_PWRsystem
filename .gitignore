@@ -6,7 +6,7 @@ data/output/2U/*
 
 
 # ただしプレースホルダーは除外（= 追跡する）
-!data/input/1U/*.txt
-!data/output/1U/*.txt
-!data/input/2U/*.txt
-!data/output/2U/*.txt
+!data/input/1U/git_keep*.txt
+!data/output/1U/git_keep/*.txt
+!data/input/2U/git_keep*.txt
+!data/output/2U/git_keep*.txt
