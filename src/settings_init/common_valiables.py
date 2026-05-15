@@ -13,8 +13,8 @@ excel_base_time = "1900/01/01 0:00:00.00" # OBC_Timeが0の時のcsvファイル
 # 以下はRTCのHK D/Lの際にモニターに出てくる値 (PC TimeとOBC Time)で更新　 
 # MOBC再起動したら更新すること！
 # 1U
-OBC_time_sample_1U = "12:16:56.000" # OBCtimeをUTCに変換する際に使用 (HKのcsvにあるOBC Timeを入れないこと！ 時刻表記ではなく, 累積時間表記で記入)
-UTC_time_sample_1U = "2026/05/14 04:09:52.429278" # OBCtimeをUTCに変換する際に使用 (PC Timeを使用)
+OBC_time_sample_1U = "21:28:31.000" # OBCtimeをUTCに変換する際に使用 (HKのcsvにあるOBC Timeを入れないこと！ 時刻表記ではなく, 累積時間表記で記入)
+UTC_time_sample_1U = "2026/05/15 03:58:08.461200" # OBCtimeをUTCに変換する際に使用 (PC Timeを使用)
 # 2U
 OBC_time_sample_2U = "1:37:41.000" # OBCtimeをUTCに変換する際に使用 (HKのcsvにあるOBC Timeを入れないこと！ 時刻表記ではなく, 累積時間表記で記入)
 UTC_time_sample_2U = "2026/05/14 04:09:23.233863" # OBCtimeをUTCに変換する際に使用(PC Timeを使用)
