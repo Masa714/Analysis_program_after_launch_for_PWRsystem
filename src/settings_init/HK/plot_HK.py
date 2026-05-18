@@ -10,6 +10,7 @@ plot_style = 0 # 0:点のみ,  1：点+外挿曲線
 fitting_lebel = 0.05 # 外挿曲線のフィッティングの度合い (0～1までの範囲, 0に近いほどフィッティングが急になる)
 # graph__title ----------------------------------------
 #PWR
+
 # 発電量関連
 title_eath_sap = "PWR_eath_sap_vs_UTC" # 各パネルでの発電量の時刻歴
 title_IV_px = "I-Vcurve_px" # px面のI-V曲線
@@ -23,11 +24,16 @@ title_PV_pz = "P-Vcurve_pz" # px面のI-V曲線
 title_PV_mx = "P-Vcurve_mx" # px面のI-V曲線
 title_PV_my = "P-Vcurve_my" # px面のI-V曲線
 title_suns = "sunvec_vs_UTC" # 太陽ベクトルの時刻歴
-title_temp_power_vs_sunvecx = "temp,power_vs_sunvec_x" # 温度, 各面の生成電力と太陽ベクトルの相関
-title_temp_power_vs_sunvecy = "temp,power_vs_sunvec_y" # 温度, 各面の生成電力と太陽ベクトルの相関
-title_temp_power_vs_sunvecz = "temp,power_vs_sunvec_z" # 温度, 各面の生成電力と太陽ベクトルの相関
+title_temp_power_vs_sunvecx = "panel_temp,SAP_power_vs_sunvec_x" # 温度, 各面の生成電力と太陽ベクトルの相関
+title_temp_power_vs_sunvecy = "panel_temp,SAP_power_vs_sunvec_y" # 温度, 各面の生成電力と太陽ベクトルの相関
+title_temp_power_vs_sunvecz = "panel_temp,SAP_power_vs_sunvec_z" # 温度, 各面の生成電力と太陽ベクトルの相関
 
-
+# バッテリー関連
+title_BAT_vols_and_curs_2bat = "2ndbat_voltage,current_vs_UTC" # バッテリー電圧・電流の時刻歴
+title_BAT_pwr_and_temp = "2ndbat_pwr_vs_temp" #バッテリー温度と消費電力の相関
+title_BAT_curs_and_temp = "2ndbat_current_vs_temp" #バッテリー温度とバッテリー電流の相関
+title_BAT_temp_timestamp = "2ndbat_temp_vs_UTC" #バッテリー温度の時刻歴
+title_panel_temp_timestamp = "panel_temp_vs_UTC" #パネル温度の時刻歴
 #------------------------------------------------------
 # axis_label ----------------------------------------------
 time_label = "UTC_time" # 時刻歴の軸ラベル
@@ -46,14 +52,14 @@ color_3 = "springgreen"
 color_4 = "orange"
 color_5 = "purple"
 color_6 = "brown"
+color_7 = "pink"
+color_8 = "gray"
+color_9 = "teal"
+color_10 = "yellow"
 
 #-----------------------------------------------------
 # plot_area-------------------------------------------
-# 軸ラベルについては、ここで編集はできないようになっています
-# 各種plotのところから変更をお願いします
-plot_timerange = 100 # 時刻歴について、一番時刻が古いデータから何分間のデータをプロットするのか  TLCとRTCのHKが混ざったときの対策
-utc_fontsize = 6 # 時刻歴の横軸メモリのフォントサイズ
-time_tick_interval = int(plot_timerange * 0.2) # 時刻歴-横軸の目盛り間隔(整数)  timerangeの5分の1程度がいい, 自分で設定する際は「interval=数字(分)」で設定
+# 時刻関係はcommon_valiablesの方にある
 x1_tick_interval = None # 横軸(時刻以外)の目盛り間隔　でフォルトは自動(NONE)で設定　自分で設定する際は「interval=整数」で設定
 y1_tick_interval = None # 縦軸の目盛り間隔  デフォルトは自動で設定, 自分で設定する際は「interval=整数」で設定
 y2_tick_interval = None # 2つy軸を使用するときの, 2つ目の縦軸の目盛り間隔  デフォルトは自動で設定, 自分で設定する際は「interval=整数」で設定

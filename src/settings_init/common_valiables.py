@@ -22,6 +22,12 @@ UTC_time_sample_2U = "2026/05/14 04:09:23.233863" # OBCtimeをUTCに変換する
 # 抽出方法について　(基本はfloatとして抽出される)
 non_float_header = ["OBC Time"] # floatに変換してほしくないものを記載 (時刻など)
 
+# プロットの設定(一般的なもの)
+utc_fontsize = 6 # 時刻歴の横軸メモリのフォントサイズ
+apply_time_condition = True # plot_timerangeを使用するかどうか True：使用する, False：使用しない
+plot_timerange = 100 # 時刻歴について、一番時刻が古いデータから何分間のデータをプロットするのか TLCとRTCのHKが混ざったときの対策 
+                     # 使用しない場合, csvファイル内の全てのデータをプロットする
+time_tick_interval = int(plot_timerange * 0.2) # 時刻歴-横軸の目盛り間隔(整数)  timerangeの5分の1程度がいい, 自分で設定する際は「interval=数字(分)」で設定
 #-----------------------------------------------------------------------------------------
 # extra operation
 

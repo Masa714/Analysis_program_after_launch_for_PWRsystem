@@ -36,8 +36,6 @@ output.output_csv_excel(all_list_2U, header_list=None, use_utc_name=False, base_
 main_1U.analysis_1U(all_list_1U) # 1Uのプログラムを実行
 main_2U.analysis_2U(all_list_2U) # 2Uのプログラムを実行
 
-
-
 #-----------------------------------------------------------------------------------
 # おまけ機能
 extra.extra_functions()
