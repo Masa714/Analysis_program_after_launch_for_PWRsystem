@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import matplotlib.dates as mdates
-import src.settings_init.HK.plot_HK as plt_HK
+import src.settings_init.common_valiables as com_val
 from statsmodels.nonparametric.smoothers_lowess import lowess
 #------------------------------------------------------------
 # functions
@@ -36,9 +36,9 @@ def plot_from_dict(
     enable_fit=None,
     fitting_lebel=None,
 
-    condition=None
+    time_condition=None,
+    other_condition=None
 ):
-    from statsmodels.nonparametric.smoothers_lowess import lowess  # ✅ LOESS追加
 
     # ✅ LOESS関数
     # 外挿曲線を入れる場合
@@ -92,8 +92,11 @@ def plot_from_dict(
 
     # mask
     mask = np.ones(len(x), dtype=bool)
-    if condition is not None:
-        mask &= np.array(condition(data_dict, x))
+
+    if com_val.apply_time_condition and callable(time_condition):
+        mask &= np.array(time_condition(data_dict, x))
+    if callable(other_condition):
+        mask &= np.array(other_condition(data_dict, x))
 
     x = x[mask]
 
@@ -139,7 +142,7 @@ def plot_from_dict(
             ax.xaxis.set_major_formatter(mdates.DateFormatter('%y-%m-%d %H:%M'))
 
             for label in ax.get_xticklabels():
-                label.set_fontsize(plt_HK.utc_fontsize)
+                label.set_fontsize(com_val.utc_fontsize)
         else:
             x_min, x_max = plt.xlim()
             plt.xticks(np.arange(x_min, x_max + x_tick_interval, x_tick_interval))
@@ -178,7 +181,8 @@ def plot_dual_axis(
     fitting_lebel=None,
 
     # フィルタ条件設定
-    condition=None
+    time_condition=None,
+    other_condition=None
 ):
     from statsmodels.nonparametric.smoothers_lowess import lowess
 
@@ -254,8 +258,12 @@ def plot_dual_axis(
     # mask作成
     # ======================
     mask = np.ones(len(x), dtype=bool)
-    if condition is not None:
-        mask &= np.asarray(condition(data_dict, x), dtype=bool)
+
+    if com_val.apply_time_condition and callable(time_condition):
+        mask &= np.array(time_condition(data_dict, x))
+
+    if callable(other_condition):
+        mask &= np.array(other_condition(data_dict, x))
 
     x = x[mask]
 

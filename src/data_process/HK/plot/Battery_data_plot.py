@@ -9,6 +9,7 @@ content: this file for battery plot
 import src.settings_init.HK.plot_HK as plt_HK
 import pandas as pd
 import src.utils.plot_functions as pf
+import src.settings_init.common_valiables as com_val
 #-------------------------------------
 #-------------------------------------
 # functions
@@ -31,17 +32,15 @@ def battery_voltage_timestamp(extracted_list):
         y_right_label=plt_HK.curs_label,
 
         # 目盛
-        x_tick_interval=plt_HK.time_tick_interval,
+        x_tick_interval=com_val.time_tick_interval,
         
         enable_fit=plt_HK.plot_style, # プロットの種類
         fitting_lebel=plt_HK.fitting_lebel, # 外挿曲線のフィッティングの緩さ
         
         # 抽出条件：一番古いデータから～分後までのデータ 
         time_condition = lambda df, _: (
-            df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)
-        ),
-
-        apply_time_condition=plt_HK.enable_timerange
+            df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=com_val.plot_timerange)
+        )
     )
 
 # 2. バッテリー温度とバッテリー消費電力・電流の関係を表示する関数
@@ -69,10 +68,8 @@ def battery_temp_consume_coleration(extracted_list):
         
         # 抽出条件：一番古いデータから～分後までのデータ  
         time_condition = lambda df, _: (
-            (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
-        ),
-
-        apply_time_condition=plt_HK.enable_timerange
+            df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=com_val.plot_timerange)
+        )
     )
 
     # 電流と温度の関係
@@ -98,10 +95,8 @@ def battery_temp_consume_coleration(extracted_list):
         
         # 抽出条件：一番古いデータから～分後までのデータ  
         time_condition = lambda df, _: (
-            (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
-        ),
-
-        apply_time_condition=plt_HK.enable_timerange
+            df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=com_val.plot_timerange)
+        )
     )
 
 # 3. パネル温度とバッテリー温度の時刻歴を表示する関数
@@ -119,7 +114,7 @@ def battery_panel_temp_timestamp(extracted_list):
         x_label=plt_HK.time_label, # x軸ラベル
         y_label=plt_HK.temp_label, # y軸ラベル
 
-        x_tick_interval=plt_HK.time_tick_interval, # x軸の目盛り間隔
+        x_tick_interval=com_val.time_tick_interval, # x軸の目盛り間隔
         y_tick_interval=plt_HK.y1_tick_interval, # y軸の目盛り間隔
         x_range=plt_HK.x1_range, # x軸のグラフ範囲
         y_range=plt_HK.y1_range, # y軸のグラフ範囲
@@ -129,10 +124,8 @@ def battery_panel_temp_timestamp(extracted_list):
         
         # 抽出条件：一番古いデータから～分後までのデータ  
         time_condition = lambda df, _: (
-            (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
-        ), 
-
-        apply_time_condition=plt_HK.enable_timerange
+            df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=com_val.plot_timerange)
+        )
     )
 
     # パネル温度
@@ -148,7 +141,7 @@ def battery_panel_temp_timestamp(extracted_list):
         x_label=plt_HK.time_label, # x軸ラベル
         y_label=plt_HK.temp_label, # y軸ラベル
 
-        x_tick_interval=plt_HK.time_tick_interval, # x軸の目盛り間隔
+        x_tick_interval=com_val.time_tick_interval, # x軸の目盛り間隔
         y_tick_interval=plt_HK.y1_tick_interval, # y軸の目盛り間隔
         x_range=plt_HK.x1_range, # x軸のグラフ範囲
         y_range=plt_HK.y1_range, # y軸のグラフ範囲
@@ -158,10 +151,8 @@ def battery_panel_temp_timestamp(extracted_list):
         
         # 抽出条件：一番古いデータから～分後までのデータ  
         time_condition = lambda df, _: (
-            (df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=plt_HK.plot_timerange)) 
-        ),
-
-        apply_time_condition=plt_HK.enable_timerange
+             df["UTC Time"] <= df["UTC Time"].min() + pd.Timedelta(minutes=com_val.plot_timerange)
+        )
     )
 
 #-------------------------------------
